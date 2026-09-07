@@ -1,0 +1,2825 @@
+﻿<!DOCTYPE html>
+<!-- choisir la langue et empecher que le navigateur ne demande une traduction automatique -->
+<html lang="en" class="notranslate">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Empêcher Google Chrome de traduire -->
+<meta name="google" content="notranslate">
+
+<!-- Empêcher Microsoft Edge de proposer la traduction -->
+<meta name="msapplication-tap-highlight" content="no">
+<meta http-equiv="Content-Language" content="en">
+
+<!-- Protection supplémentaire : certains moteurs respectent cette directive -->
+<meta name="format-detection" content="no">
+
+<title id="pageTitle"></title>
+<style>
+  body{font-family:Arial, sans-serif;background:#f4f4f4;margin:0;color:#333}
+
+/* === Header fixe uniquement sur la page finale === */
+.header-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+}
+
+/* espace ajouté sous le header fixe */
+.header-spacer {
+  height: 90px; /* adapte si ton header est plus haut */
+}
+
+
+//banderolle bleue en haut de page; padding hauteur
+ 
+ //header, footer{background:#0b57d0;color:#fff;padding:1.2em;text-align:center}
+
+header, footer {
+  background:#0b57d0;renderHomeTexts();
+  color:#fff;
+  padding:0.1em;    /* moitie  moins haut */
+  text-align:center;
+  line-height:1.2;      /* resserre le texte verticalement */
+}
+
+
+  h1,h2{color:#0b57d0;margin-top:0}
+  #titleBar{display:flex;gap:8px;justify-content:center;align-items:baseline;margin:0}
+  #versionNum{font-weight:400;opacity:.95}
+  .subhead{max-width:1000px;margin:0 auto 0;
+line-height:1.4}
+header p{
+  margin-top:0;
+  margin-bottom:0;
+}
+#homeSub1{
+  margin-top:-4px;   /* remonte visuellement KORRIGERA */
+}
+/* Le titre dans la banderolle doit rester blanc (sinon bleu sur bleu) */
+header h1, header h2, header #titleBar, header #mainTitle, header #versionNum{
+  color:#fff !important;
+}
+/*Taille réelle du titre dans la banderolle */
+header #mainTitle {
+  font-size: 1rem !important;   /* ← réduit vraiment */
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 0;
+}
+header #titleBar {
+  padding: 0;
+  margin: 0;
+  line-height: 1.1;
+}
+
+/* Version (ex 22-e) juste à côté */
+header #versionNum {
+  font-size: 0.85rem;     /* légèrement plus petit */
+  font-weight: 700;
+}
+.validity{color:#b91c1c;margin:.75em auto 0;max-width:1000px;font-weight:700};
+  section{background:#fff;margin:1.25em auto;padding:1.25em;border-radius:8px;max-width:1000px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+
+ /* lay out page d'introduction; marges*/
+.intro-card{border-radius:10px;
+    padding-left:3em;   /* marge interne à gauche */
+    padding-right:2em;  /* marge interne à droite */
+  }
+/* Marges dans la page d’accueil */
+#menuScreen {
+    padding-left: 3em;    /* marge interne à gauche */
+    padding-right: 2em;   /* marge interne à droite */
+}
+
+  .error{color:#d00;margin-top:8px;min-height:20px;font-weight:700}
+  .ok{color:#0b7d0b;font-weight:700;margin-left:8px}
+  .instructions{background:#fff7b2;color:#000;padding:10px;border-radius:5px;margin-bottom:10px}
+  .instructions span{color:#c00;font-weight:700}
+  #microStatus{font-weight:700;margin-left:10px;color:red}
+  .section-number{color:#0b57d0;font-weight:700;margin:.25rem 0}
+  .question-number{font-weight:700;margin:.25rem 0}
+  textarea,input[type="text"],input[type="number"]{width:96%;font-size:1em;padding:8px;margin-top:5px;border:1px solid #ccc;border-radius:6px;min-height:40px}
+  #progressContainer{background:#ddd;width:100%;height:8px;margin-top:15px;border-radius:5px}
+  #progressBar{background:#0b57d0;height:8px;width:0%;border-radius:5px}
+  #scoreContainer{display:none;margin-top:10px}
+  #scoreContainer label{color:#b00;font-weight:700}
+  #menuScreen select{width:50%;max-width:360px;font-size:14px;padding:4px 8px;height:32px;background:#fff;color:#000;border:1px solid #888;appearance:auto;border-radius:6px}
+  #menuScreen label{display:inline-block;min-width:190px;margin-bottom:6px}
+  button{background:#0b57d0;color:#fff;border:0;padding:10px 18px;margin:8px 5px;border-radius:6px;cursor:pointer;font-size:1em}
+  button:hover{background:#0a49b3}
+  .inline{display:inline-block;vertical-align:middle}
+@media print {
+#previewActions {
+  display: none !important;
+}
+  #menuScreen,
+  #introScreen,
+  #main,
+  header,
+  footer,
+  #summary,
+  #summary textarea,
+  #summary input {
+    display: none !important;
+  }
+  #printView {
+    display: block !important;
+  }
+  body {
+    background: #fff !important;
+  }
+  section {
+    box-shadow: none !important;
+  }
+}
+
+/* Marges dans le questionnaire (écran principal) */
+#main {
+  padding-left: 3em;   /* marge interne à gauche */
+  padding-right: 2em;  /* marge interne à droite */
+}
+
+/* Et pour la page SAMMANFATTNING/KORRIGERING si tu veux la même chose */
+#summary, #printView {
+  padding-left: 3em;
+  padding-right: 2em;
+}
+
+/* --- Espacement entre les lignes dans l’introduction --- */
+#introText {
+  line-height: 1.6;   /* augmente l’espace vertical entre les lignes */
+  font-weight: bold;     /* texte en gras */ 
+}
+/*Entree du code en GRAS*/
+#labelCode {font-weight: bold;color:red;
+}
+
+ /* Bouton et panneau d’aide */
+.header-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:8px;
+}
+
+#helpBtn{
+  background:#ffffff;
+  color:#0056cc;
+  border-radius:999px;
+  padding:4px 10px;
+  font-size:0.9em;
+  border:1px solid rgba(255,255,255,0.7);
+  cursor:pointer;
+}
+
+#helpBtn:hover{
+  background:#e8f0ff;
+}
+
+#helpPanel{
+  max-width:900px;
+  margin:0.5em auto 0;
+  background:#fffbe6;
+  border-left:4px solid #0056cc;
+  padding:0.75em 1em;
+  border-radius:6px;
+  font-size:0.9em;
+}
+ 
+/* Bouton AIDE rouge */
+.help-btn{
+  background:#d32f2f;      /* rouge moderne */
+  color:#fff;
+  border-radius:999px;
+  padding:4px 10px;
+  font-size:0.9em;
+  border:1px solid #b71c1c;
+  cursor:pointer;
+  font-weight:600;
+}
+
+#helpBtn.help-btn{
+  background:#d32f2f;
+  color:#fff;
+  border:1px solid #b71c1c;
+}
+
+</style>
+<script>
+// ===== CONFIGURATION GLOBALE (modifier uniquement ici) =====
+// Nom de version (affichée à côté du titre)
+let CONFIG_VERSION_LABEL = "Version 87";
+
+// Identifiant standard du formulaire (pour le localStorage / reprise après pause et pour Codicent)
+// Mettre ce que l’on veut, par exemple : let CONFIG_FORM_ID = "NEURO_Q154_v1";
+let CONFIG_FORM_ID       = "SLEEP_sv87";
+
+// Liste des questionnaires visibles dans le menu principal
+const CONFIG_FORMS = ["SLEEP", "DSM", "Neurology", "GP"];
+
+// Questionnaire ACTIF dans ce fichier
+let CONFIG_ACTIVE_FORM   = "SLEEP";
+
+// Langue par défaut au chargement de la page : "sv" (suédois), "fr" (français), "en" (anglais)
+let CONFIG_LANG_DEFAULT  = "sv";
+
+// ===== Mode global d’export des réponses =====
+// true  = mode SÉCURISÉ : fichiers TXT (COPIER + SLUTFÖR) brouillés + bouton PDF masqué
+// false = mode OUVERT   : fichiers TXT en clair + bouton PDF visible
+
+let CONFIG_SECURE_EXPORT = false;
+
+// ===== Brouillage réversible simple pour l’export (questions + réponses) =====
+function scrambleText(text){
+  if (!text) return "";
+  return String(text).split("").reverse().join("");
+}
+
+// Langues admises dans ce fichier: sv,fr,en; si les 3 sont choisies, ttes sont actives, si on ne veut garderqu'une seule langue, enlever les2 autres
+
+let CONFIG_ALLOWED_LANGS = ["sv","fr","en"];
+
+// Maximal tid (i timmar) för att en paus-sparad session ska kunna återupptas
+let CONFIG_PAUSE_HOURS   = 5;
+// === Texte de recommandations dans la banderolle de la page finale ===
+const FINAL_RECO = {
+sv: `KORRIGERA – Ändra ett felaktigt svar.
+<span style="color:yellow; font-weight:bold;">OBS: Titta på knapparna längst ned på sidan.</span>
+<div style="display:flex; justify-content:center; gap:18px; font-weight:700;">
+  <span>PDF – Sparar ett dokument i “Hämtade filer”.</span>
+  <span>KOPIERA – Skapar en textfil i “Hämtade filer”.</span>
+</div>
+<div style="display:flex; justify-content:center; gap:18px; margin-top:2px; font-weight:700;">
+  <span>SLUTFÖR – Sparar allt och avslutar testet.</span>
+  <span>SKICKA – Skickar dina svar för analys.</span>
+</div>`,
+
+fr: `CORRIGER – Modifier une réponse incorrecte.
+<span style="color:yellow; font-weight:bold;">REMARQUE : Regardez les boutons en bas de la page.</span>
+<div style="display:flex; justify-content:center; gap:18px; font-weight:700;">
+  <span>PDF – Enregistre un document dans “Téléchargements”.</span>
+  <span>COPIER – Crée un fichier texte dans “Téléchargements”.</span>
+</div>
+<div style="display:flex; justify-content:center; gap:18px; margin-top:2px; font-weight:700;">
+  <span>TERMINER – Enregistre tout et termine le test.</span>
+  <span>ENVOYER – Envoie vos réponses pour analyse.</span>
+</div>`,
+
+en: `CORRECT – Change an incorrect answer.
+<span style="color:yellow; font-weight:bold;">NOTE: Look at the buttons at the bottom of the page.</span>
+<div style="display:flex; justify-content:center; gap:18px; font-weight:700;">
+  <span>PDF – Saves a document in “Downloads”.</span>
+  <span>COPY – Creates a text file in “Downloads”.</span>
+</div>
+<div style="display:flex; justify-content:center; gap:18px; margin-top:2px; font-weight:700;">
+  <span>FINISH – Saves everything and ends the test.</span>
+  <span>SEND – Sends your answers for analysis.</span>
+</div>`
+};
+
+
+// Longueur du code fourni par le sujet (nombre de chiffres) 
+let CONFIG_CODE_LENGTH   = 4;
+
+// (Valfritt) Sista giltighetsdag för detta formulär, format "ÅÅÅÅ-MM-DD"
+// Exempel: "2025-12-31", ou "" pour aucune limite; voir plus bas validite ex 7 jours 
+let CONFIG_VALID_UNTIL   = "";
+
+// ===== Validity banner (fonction réutilisable) =====
+function updateValidityBanner(){
+  const v = document.getElementById("validityLines");
+  if (!v) return;
+
+  v.style.color = "yellow";
+
+  const today = new Date();
+  const end = new Date(today.getTime() + 5 * 24 * 3600 * 1000);
+
+  let text = "";
+  if (currentLang === "fr") {
+    text = `Ce test est valable jusqu’au ${end.toLocaleDateString('fr-FR',{
+      year:'numeric', month:'long', day:'numeric'
+    })}`;
+  } else if (currentLang === "en") {
+    text = `This test is valid until ${end.toLocaleDateString('en-US',{
+      year:'numeric', month:'long', day:'numeric'
+    })}`;
+  } else {
+    text = `Detta test är giltigt till ${end.toLocaleDateString('sv-SE',{
+      year:'numeric', month:'long', day:'numeric'
+    })}`;
+  }
+
+  v.innerHTML = text;
+}
+// ===== Init bannière de validité + bouton PDF =====
+document.addEventListener("DOMContentLoaded", () => {
+  // mettre le texte dans la banderole (dans la langue courante)
+  updateValidityBanner();
+
+  const pdfBtn = document.getElementById("pdfBtn");
+  if (pdfBtn){
+    pdfBtn.style.display = CONFIG_SECURE_EXPORT ? "none" : "inline-block";
+
+    // ===== PDF : nom = CONFIG_FORM_ID + code 4 chiffres =====
+    function safeFilePart(s){
+      return String(s || "")
+        .trim()
+        .replace(/\s+/g, "-")
+        .replace(/[\\\/:*?"<>|]+/g, "_");
+    }
+
+    function buildPdfName(){
+      const base = safeFilePart(CONFIG_FORM_ID || document.title || "Formulaire");
+      const code = safeFilePart((typeof userCode !== "undefined" && userCode) ? userCode : "0000");
+      return `${base}-${code}`; // ex: ThisWorks-1234
+    }
+
+    // Important: éviter d'ajouter 2 listeners si ce bloc est copié ailleurs
+    if (!pdfBtn.dataset.named){
+      pdfBtn.dataset.named = "1";
+     document.getElementById("printPreviewBtn").addEventListener("click", ()=>{
+     
+        const oldTitle = document.title;
+        try{
+          if (typeof buildPrintView === "function") buildPrintView();
+          document.title = buildPdfName();
+          window.print();
+        }catch(e){
+          document.title = buildPdfName();
+          window.print();
+        }finally{
+          setTimeout(()=>{ document.title = oldTitle; }, 1500);
+        }
+      });
+    }
+  }
+});
+
+// Skal-etiketter per språk (kan utökas vid behov)
+const CONFIG_SCALE_LABELS = {
+  sv: {
+    numeric : ["aldrig","ibland","ofta","mycket ofta","alltid"],
+    verbal1 : ["inte alls","kanske","lite","ganska mycket","mycket"],
+    verbal2 : ["dålig","rättvis","bra","mycket bra","utmärkt"],
+    help    : "Välj 1–5"
+  },
+  fr: {
+    numeric : ["jamais","parfois","souvent","très souvent","toujours"],
+    verbal1 : ["pas du tout","un peu","moyen","assez","beaucoup"],
+    verbal2 : ["mauvais","moyen","bon","très bon","excellent"],
+    help    : "Choisissez 1–5"
+  },
+  en: {
+    numeric : ["never","sometimes","often","very often","always"],
+    verbal1 : ["not at all","a bit","somewhat","quite a lot","very much"],
+    verbal2 : ["poor","fair","good","very good","excellent"],
+    help    : "Choose 1–5"
+  }
+};
+
+
+//
+/* Pour transformer un clone SÖMN → NEURO :
+Nouveau fichier : copie SÖMN → neuro_sv50_CONFIG_FULL.html
+En haut dans CONFIG :
+CONFIG_FORM_ID = "NEURO_..."
+CONFIG_LANG_DEFAULT = "sv" (ou "fr" si NEURO français)
+Dans CONFIG_M.sv :
+modifier les textes “SÖMN” → “NEUROLOGI”
+Dans <title> :
+changer le texte “SÖMN” → “NEUROLOGI”
+Remplacer questions + ATTR + SKIP par la version NEURO */
+//
+
+// UI‑texter per språk för startsida, intro, sammanfattning m.m.
+// ===== Internationalised UI strings for HOME =====
+const CONFIG_M = {
+  sv: {
+    homeTitle: "Välj formulär och språk för att börja.",
+    sub1: "Dina svar är konfidentiella. Ta den tid du behöver.",
+    selectTitle: "Välj frågeformulär och språk",
+    form: "Frågeformulär:",
+    voiceDevice: "Röst (enligt enheten):",
+    voiceTest: "Rösttest",
+    lang: "Språk:",
+    continue: "Fortsätt",
+    introTitle: "Introduktion",
+    introText: "Detta frågeformulär är anonymt.\nDet avser dina senaste två månader och frågorna är indelade i sektioner.\nTidsåtgången är cirka 30–40 minuter (paus är möjlig när som helst).\nÄven om du stänger formuläret innan du är klar kan du fortsätta där du slutade,förutsatt att du anger samma kod\nOm du gör ett misstag kan du korrigera dina svar.\n\nDu kan svara med tangentbordet eller använda mikrofonen. I så fall, tala långsamt och tydligt.\n(Alla system, webbläsare eller enheter är inte kompatibla med röstigenkänning.)\n\nDu kan också lyssna på frågorna genom att trycka på knappen RÖST och stoppa uppspelningen genom att trycka på TYST \n- förutsatt att din enhet kan spela upp röst (som du testade på startsidan).\n\nI slutet av frågeformuläret kan du läsa igenom, korrigera, kommentera, kopiera, spara som PDF och skicka dina svar för analys.",
+    codeLabel: "Ange NU en fyrsiffriga kod — du behöver komma ihåg den!",
+    start: "Starta",
+    unavailable: "ej tillgänglig",
+
+    notAvailableTri: " (non disponible / unavailable / ej tillgänglig)",
+    instruction: 'Skriv ditt svar och tryck <span style="font-weight:bold;">RETUR ⏎</span>',
+    answerPlaceholder: "Skriv ditt svar här…",
+
+    summaryTitle: "SAMMANFATTNING  KORRIGERING",
+    codeResume: "Formulärkod :",
+    comments: "Kommentarer",
+    exportPdf: "Exportera PDF",
+    kopiera: "Kopiera",
+    slutfor: "Slutför",
+    skicka: "Skicka för analys",
+    pause: "Paus",
+    validate: "Validera",
+    correct: "Korrigera",
+    chooseSomn: "Detta frågeformulär är inte tillgängligt. Välj SÖMN."
+  },
+  en: {
+    homeTitle: "Pick a questionnaire and a language to get started.",
+    sub1: "Your answers are confidential. Take your time.",
+    selectTitle: "Select questionnaire and language",
+    form: "Questionnaire:",
+    voiceDevice: "Voice (device):",
+    voiceTest: "Test voice",
+    lang: "Language:",
+    continue: "Continue",
+    introTitle: "Introduction",
+    introText: "This questionnaire is anonymous.\nIt covers your last two months, and the questions are grouped by sections.\nThe duration is about 30–40 minutes (you may pause at any time).\nEven if you close the form before finishing, you can resume where you left off, provided you enter the same code.\nIf you make a mistake, you can correct your answers.\n\nYou may answer using the keyboard or use the microphone. In that case, speak slowly and clearly.\n(Not all systems, browsers, or devices are compatible with speech recognition.)\n\nYou can also listen to the questions by pressing the VOICE button, and stop playback by pressing SILENCE \n- provided that you device can play voice (as tested on the start page).\n\nAt the end of the questionnaire, you will be able to review, correct, comment, copy, save as PDF, and send your answers for analysis.",
+
+    codeLabel: "Enter NOW a 4‑digit code — you will need to remember it!",
+    start: "Start",
+    unavailable: "unavailable",
+    notAvailableTri: " (non disponible / unavailable / ej tillgänglig)",
+   instruction: 'Type your answer and press <span style="font-weight:bold;">ENTER ⏎</span>',
+
+    summaryTitle: "Summary & corrections",
+    codeResume: "Form code:",
+    comments: "Comments",
+    exportPdf: "Export PDF",
+    kopiera: "Copy",
+    slutfor: "Finish",
+    skicka: "Send for analysis",
+    pause: "Pause",
+    validate: "Validate",
+    correct: "Correct",
+    chooseSomn: "This questionnaire is not available. Please choose SÖMN."
+  },
+  fr: {
+    homeTitle: "Choisissez un questionnaire et une langue pour commencer.",
+    sub1: "Vos réponses sont confidentielles. Prenez votre temps.",
+    selectTitle: "Sélectionnez questionnaire et langue",
+    form: "Questionnaire :",
+    voiceDevice: "Voix (appareil) :",
+    voiceTest: "Test voix",
+    lang: "Langue :",
+    continue: "Continuer",
+    introTitle: "Introduction",
+introText: "Ce questionnaire est anonyme.\nIl porte sur vos deux derniers mois et les questions sont regroupées par sections.\nLa durée est d’environ 30-40 minutes (pause possible à tout moment).\nMême si vous fermez le formulaire avant d’avoir terminé, vous pourrez reprendre là où vous vous étiez arrêté, à condition de saisir le même code.\nEn cas d’erreur, vous pouvez corriger vos réponses.\n\nVous pouvez répondre au clavier ou utiliser le microphone. Dans ce cas, parlez lentement et clairement.\n(Tous les systèmes, navigateurs ou appareils ne sont pas compatibles avec la reconnaissance vocale.)\n\nVous pouvez également écouter les questions en appuyant sur le bouton VOIX, et arrêter l’écoute en appuyant sur SILENCE \n(à condition que votre appareil puisse diffuser la voix comme tester sur la page d'accueil).\n\nÀ la fin du questionnaire, vous pourrez relire, corriger, commenter, copier, enregistrer en PDF et envoyer pour analyse.",
+    codeLabel: "Entrez MAINTENANT un code à 4 chiffres - vous devrez vous en souvenir!",
+    start: "Démarrer",
+    unavailable: "non disponible",
+    notAvailableTri: " (non disponible / unavailable / ej tillgänglig)",
+   
+    instruction: 'Écrivez votre réponse et appuyez sur <span style="font-weight:bold;">ENTRÉE ⏎</span>',
+    summaryTitle: "Résumé & corrections",
+    codeResume: "Code du formulaire :",
+    comments: "Commentaires",
+    exportPdf: "Exporter PDF",
+    kopiera: "Copier",
+    slutfor: "Terminer",
+    skicka: "Envoyer pour analyse",
+    pause: "Pause",
+    validate: "Valider",
+    correct: "Corriger",
+    chooseSomn: "Ce questionnaire n’est pas disponible. Veuillez choisir SÖMN."
+  }
+};
+
+
+const M = CONFIG_M;
+let currentLang = CONFIG_LANG_DEFAULT;
+const PRINT = {
+  sv: { code: 'Kod', answer: 'Svar', title: 'SAMMANFATTNING  KORRIGERING' },
+  fr: { code: 'Code', answer: 'Réponse', title: 'SAMMANFATTNING  KORRIGERING' },
+  en: { code: 'Code', answer: 'Answer', title: 'SAMMANFATTNING  KORRIGERING' }
+};
+
+// ===== Voices (SV / FR / EN) =====
+
+// Code langue pour le TTS selon currentLang
+function getTtsLangCode(){
+  if (currentLang === "en") return "en-US";
+  if (currentLang === "fr") return "fr-FR";
+  return "sv-SE"; // défaut : suédois
+}
+
+// Choisir la meilleure voix locale pour la langue courante
+function pickVoiceForCurrentLang(){
+  if (!window.speechSynthesis) return null;
+  const voices = window.speechSynthesis.getVoices() || [];
+  if (!voices.length) return null;
+
+  const wanted = getTtsLangCode();
+  const wantedPrefix = wanted.slice(0,2).toLowerCase();
+
+  // 1) correspondance exacte (ex: "fr-FR")
+  let vmatch = voices.find(v => (v.lang || "").toLowerCase() === wanted.toLowerCase());
+
+  // 2) sinon, même langue (ex: "fr-CA")
+  if (!vmatch){
+    vmatch = voices.find(v => (v.lang || "").toLowerCase().startsWith(wantedPrefix));
+  }
+
+  // 3) à défaut, première voix disponible
+  if (!vmatch) vmatch = voices[0] || null;
+
+  return vmatch;
+}
+
+// Met à jour le champ texte sur la page d’accueil
+function updateVoiceStatus(){
+  const field = document.getElementById("voiceStatus");
+  if (!field) return;
+
+  if (!window.speechSynthesis){
+    const t = M[currentLang];
+    field.value = t ? (t.unavailable || "unavailable") : "unavailable";
+    return;
+  }
+
+  const v = pickVoiceForCurrentLang();
+  if (v){
+    field.value = v.name + " (" + v.lang + ")";
+  } else {
+    const t = M[currentLang];
+    field.value = t ? (t.unavailable || "unavailable") : "unavailable";
+  }
+}
+
+// Test de voix (texte de démonstration dans la bonne langue)
+function speakSample(){
+  const ok = document.getElementById("voiceOk");
+  try {
+    if (!window.speechSynthesis) {
+      const msg = (currentLang === "fr")
+        ? "Le support vocal n’est pas disponible dans ce navigateur."
+        : (currentLang === "en")
+          ? "Speech support is not available in this browser."
+          : "Talstöd saknas i denna webbläsare.";
+      alert(msg);
+      return;
+    }
+
+    const sampleText = (currentLang === "fr")
+      ? "Ceci est un test de voix en français."
+      : (currentLang === "en")
+        ? "This is a voice test in English."
+        : "Det här är ett röstprov på svenska.";
+
+    const u = new SpeechSynthesisUtterance(sampleText);
+    const v = pickVoiceForCurrentLang();
+    const langCode = getTtsLangCode();
+
+    if (v){
+      u.voice = v;
+      u.lang  = v.lang || langCode;
+    } else {
+      u.lang = langCode;
+    }
+
+    u.onstart = () => {
+      const txt = (currentLang === "fr")
+        ? "— lecture en cours —"
+        : (currentLang === "en")
+          ? "— playing —"
+          : "— spelar upp —";
+      ok.textContent = txt;
+      ok.className = "ok";
+    };
+
+    u.onend = () => {
+      const txt = (currentLang === "fr")
+        ? "Test de voix OK"
+        : (currentLang === "en")
+          ? "Voice test OK"
+          : "Rösttest OK";
+      ok.textContent = txt;
+      ok.className = "ok";
+    };
+
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  } catch(e) {
+    const msg = (currentLang === "fr")
+      ? "Impossible de lire la voix."
+      : (currentLang === "en")
+        ? "Unable to play the voice."
+        : "Kunde inte spela upp rösten.";
+    alert(msg);
+  }
+}
+// --- Textes d'aide multilingues AIDE, HELP, HJÄLP ----
+function getHelpConfig(lang){
+  if (lang === "fr"){
+    return {
+      btn: "Aide",
+      title: "Aide – comment utiliser ce questionnaire ?",
+      text:
+        "<ul>" +
+        "<li><strong>Écrivez votre réponse</strong> dans la case sous la question et appuyez sur ”ENTRÉE” pour continuer.</li>" +
+        "<li><strong>Appuyez sur ”🎙️ Micro”</strong> si vous souhaitez dicter votre réponse – parlez lentement et clairement (tous les appareils ne sont pas compatibles avec la reconnaissance vocale). Le micro s’éteint automatiquement après 4 secondes si vous ne parlez pas – ou juste après votre réponse ; réactivez-le si nécessaire.</li>" +
+        "<li><strong>Pour écouter les questions</strong>, appuyez sur 🔊 VOIX. Le bouton devient alors 🔇 SILENCE – appuyez pour arrêter la lecture. Il redevient ensuite 🔊 VOIX – appuyez à nouveau pour reprendre la lecture. Cette fonction n’est possible que si le test vocal effectué au début a réussi sur votre appareil.</li>" +
+        "<li><strong>En cas d’erreur</strong>, vous pouvez revenir en arrière d’une ou plusieurs questions et corriger votre réponse avec « Corriger ». À la fin du questionnaire, vous pourrez également modifier ou corriger toutes vos réponses.</li>" +
+        "<li><strong>Appuyez sur ”Pause”</strong> pour faire une pause. Vous pouvez reprendre immédiatement avec ”Reprendre” ou sauvegarder et continuer plus tard (dans le délai indiqué) en entrant le même code à 4 chiffres qu’au début.</li>" +
+        "<li><strong>À la fin du questionnaire</strong>, la page ”Résumé / Correction” apparaîtra. Vous pourrez alors relire, corriger, commenter, copier, enregistrer en PDF et envoyer vos réponses pour analyse.</li>" +
+        "<li>Vous pouvez répondre au clavier ou utiliser le micro. Dans ce cas, parlez lentement et clairement. (Tous les systèmes, navigateurs ou appareils ne sont pas compatibles avec la reconnaissance vocale.)</li>" +
+        "<li>Vous pouvez également écouter les questions en appuyant sur VOIX et interrompre la lecture avec SILENCE – à condition que votre appareil puisse lire la voix (comme testé sur la page d’accueil).</li>" +
+     "<li><strong><span style='color:red;'>Fermez cette page d’aide en appuyant de nouveau sur \"AIDE\".</span></strong></li>" +
+"</ul>"
+ 
+    };
+  }
+
+  if (lang === "en"){
+    return {
+      btn: "Help",
+      title: "Help – how to use this questionnaire",
+      text:
+        "<ul>" +
+        "<li><strong>Type your answer</strong> in the box under the question and press “ENTER” to continue.</li>" +
+        "<li><strong>Press “🎙️ Microphone”</strong> if you want to dictate your answer – speak slowly and clearly (not all devices support speech recognition). The microphone shuts off automatically after 4 seconds of silence – or right after your answer; reactivate it if needed.</li>" +
+        "<li><strong>To listen to the questions</strong>, press 🔊 VOICE. The button becomes 🔇 SILENCE – press it to stop playback. It then becomes 🔊 VOICE again – press to resume playback. This works only if the voice test at the beginning succeeded on your device.</li>" +
+        "<li><strong>If you make a mistake</strong>, you can go back one or several questions and correct your answer using “Correct”. At the end of the questionnaire, you can also modify or correct all your answers.</li>" +
+        "<li><strong>Press “Pause”</strong> to take a break. Resume immediately with “Resume”, or save and continue later (within the allowed time) by entering the same 4-digit code as at the start.</li>" +
+        "<li><strong>At the end of the questionnaire</strong>, the “Summary / Correction” page will appear. There you can review, correct, comment, copy, save as PDF, and send your answers for analysis.</li>" +
+        "<li>You may answer using the keyboard or the microphone. If using the microphone, speak slowly and clearly. (Not all systems, browsers or devices support speech recognition.)</li>" +
+        "<li>You can also listen to the questions by pressing VOICE and stop playback with SILENCE – provided your device can play voice audio (as tested on the start page).</li>" +
+    "<li><strong><span style='color:red;'>Close this help page by pressing \"HELP\" again.</span></strong></li>" +
+"</ul>"
+   
+    };
+  }
+
+ // défaut = suédois
+return {
+  btn: "Hjälp",
+  title: "Hjälp – hur använder jag formuläret?",
+  text:
+    "<ul>" +
+    "<li><strong>Skriv ditt svar</strong> i rutan under frågan och tryck ”RETUR” för att gå vidare.</li>" +
+    "<li><strong>Tryck på ”🎙️ Mikrofon”</strong> om du vill tala in svaret – tala långsamt och tydligt (alla enheter stödjer inte röstigenkänning). Mikrofonen stängs automatiskt efter 4 sekunder om du inte pratar – eller efter ditt svar; aktivera den igen vid behov.</li>" +
+    "<li><strong>För att lyssna på frågorna</strong>, tryck på 🔊 RÖST. Knappen blir då 🔇 TYST – tryck för att stoppa uppspelningen. Knappen blir sedan åter 🔊 RÖST – tryck igen för att återuppta uppspelningen. Detta fungerar endast om rösttestet i början lyckades på din enhet.</li>" +
+    "<li><strong>Om du gör ett misstag</strong> kan du gå tillbaka en eller flera frågor och korrigera svaret med ”Korrigera”. I slutet av formuläret kan du dessutom ändra eller korrigera alla svar.</li>" +
+    "<li><strong>Tryck på ”Paus”</strong> för att ta en paus. Du kan återuppta direkt med ”Återuppta” eller spara och fortsätta senare (inom den angivna tiden) genom att ange samma 4-siffriga kod som i början.</li>" +
+    "<li><strong>I slutet av frågeformuläret</strong> visas sidan ”Sammanfattning / Korrigering”. Då kan du läsa igenom, korrigera, kommentera, kopiera, spara svaren som PDF – och skicka dem för analys.</li>" +
+    "<li><strong>Du kan svara med tangentbordet</strong> eller använda mikrofonen. I så fall, tala långsamt och tydligt. (Alla system, webbläsare eller enheter är inte kompatibla med röstigenkänning.)</li>" +
+    "<li><strong>Du kan också lyssna på frågorna</strong> genom att trycka på RÖST och stoppa uppspelningen med TYST – förutsatt att din enhet kan spela upp röst (som du testade på startsidan).</li>" +
+    "<li><span style='color:red;'><strong>Stäng denna hjälpsida genom att trycka igen på \"HJÄLP\".</span></strong></li>" +
+    "</ul>"
+};
+
+}
+
+
+function applyHelpTexts(){
+  const cfg = getHelpConfig(currentLang);
+  if (!cfg) return;
+
+  const b  = document.getElementById("helpBtn");
+  const ht = document.getElementById("helpTitle");
+  const hc = document.getElementById("helpContent");
+
+  if (b)  b.textContent  = cfg.btn;
+  if (ht) ht.textContent = cfg.title;
+  if (hc) hc.innerHTML   = cfg.text;
+}
+
+// Ouvre / ferme le panneau d'aide
+function toggleHelp(){
+  const panel = document.getElementById("helpPanel");
+  if (!panel) return;
+
+  const isHidden = (panel.style.display === "none" || panel.style.display === "");
+  panel.style.display = isHidden ? "block" : "none";
+
+  if (isHidden){
+    try{
+      panel.scrollIntoView({behavior:"smooth", block:"start"});
+    }catch(_){}
+  }
+}
+
+// ===== Home rendering =====
+function renderHomeTexts(){
+  const t = M[currentLang];
+  document.getElementById("homeTitle").textContent = t.homeTitle;
+  document.getElementById("homeSub1").textContent = t.sub1;
+  document.getElementById("selectTitle").textContent = t.selectTitle;
+  document.querySelector("label[for='questionnaireSelect']").textContent = t.form;
+  document.getElementById("voiceLabel").textContent = t.voiceDevice;
+  document.getElementById("voiceTestBtn").textContent = t.voiceTest;
+  document.querySelector("label[for='langSelect']").textContent = t.lang;
+  document.getElementById("nextLangBtn").textContent = t.continue;
+  document.getElementById("introTitle").textContent = t.introTitle;
+  document.getElementById("introText").textContent = t.introText;
+  const instr = document.getElementById("instructionText");
+  if (instr) instr.innerHTML = t.instruction;
+  document.getElementById("labelCode").textContent = t.codeLabel;
+  document.getElementById("startBtn").textContent = t.start;
+  document.getElementById("summaryTitle").textContent = t.summaryTitle;
+  document.getElementById("summaryCodeLabel").textContent = t.codeResume;
+  document.getElementById("globalCommentLabel").textContent = t.comments;
+  document.getElementById("pdfBtn").textContent = t.exportPdf;
+  document.getElementById("copyBtn").textContent = t.kopiera;
+  document.getElementById("closeBtn").textContent = t.slutfor;
+  document.getElementById("sendToCodicentBtn").textContent = t.skicka;
+  const vb = document.getElementById("validerBtn");
+  if (vb) vb.textContent = t.validate;
+  const cb = document.getElementById("corrigerBtn");
+  if (cb) cb.textContent = t.correct;
+  const pb = document.getElementById("pauseBtn");
+  if (pb) pb.textContent = t.pause;
+  const micBtn = document.getElementById("voiceBtn");
+  if (micBtn){
+    if (currentLang === "fr"){
+      micBtn.textContent = "🎙️ Micro";
+    } else if (currentLang === "en"){
+      micBtn.textContent = "🎙️ Microphone";
+    } else {
+      micBtn.textContent = "🎙️ Mikrofon";
+    }
+  }
+
+ 
+  
+  // --- Placeholder dynamique du champ de réponse ---
+  const ans = document.getElementById("answerInput");
+  if (ans && t.answerPlaceholder){
+    ans.placeholder = t.answerPlaceholder;
+  }
+ // Met à jour les textes d'aide selon la langue
+   applyHelpTexts();
+}   
+
+
+function microStatusText(on){
+  // micro éteint = texte court
+  if (!on){
+    if (currentLang === "fr") {
+      return "🎤 Micro inactif";
+    }
+    if (currentLang === "en") {
+      return "🎤 Micro off";
+    }
+    return "🎤 Mikrofon av";
+  }
+
+  // micro actif = texte explicatif
+  if (currentLang === "fr") {
+    return "🎤 Micro actif — écoute courte (4 s). Recliquer pour continuer. Validez la réponse.";
+  }
+  if (currentLang === "en") {
+    return "🎤 Micro on — short listening (4 s). Press again to continue. Validate the answer.";
+  }
+  return "🎤 Mikrofon på — lyssnar kort (4 s). Klicka igen för att fortsätta. Validera svaret.";
+}
+
+
+// ===== Questions (full) =====
+// ===== Questions (svensk version) =====
+
+let questions = [
+  // Sektion 1 Allmänt
+  { section: 1, text: "Hur gammal är du?" },
+  { text: "Är du en man, en kvinna eller annat?" },
+  { text: "Vad väger du (kg)?" },
+  { text: "Hur lång är du (cm)?" },
+
+  // Sektion 2 Kontakt orsak
+  { section: 2, text: "Varför söker du hjälp idag?" },
+  { text: "Kan du beskriva de specifika sömnproblem du upplever? t.ex. ständig sömnighet, svårt att hålla sig vaken, svårt att somna, upprepade uppvaknanden, tidigt uppvaknanden på morgon, känsla av att inte vara utvilad på morgonen, eller andra problem)" },
+  { text: "Vaknar du under natten? Om ja, hur många timmar efter insomnandet händer det vanligtvis?" },
+  { text: "Har du svårt att somna om efteråt?" },
+  { text: "Hur länge har du haft sömnproblem?" },
+  { text: "Tycker du att det hänger ihop med en särskild händelse?" },
+  { text: "Har du lagt märke till någon viss periodicitet? (t.ex. flera dåliga nätter följt av en bättre natt)" },
+  { text: "Har du redan konsulterat vårdpersonal för dina sömnproblem? Om ja: vilka behandlingar har du prövat? (t.ex. KBT, livsstilsförändringar, läkemedel – om läkemedel, ange vilka)" },
+ { text: "Har du ofta förskjutna tider för insomning/uppvaknande (sen kväll, sen morgon, oregelbundet)?" },
+
+  // Sektion 3 Sömnighet
+  { section: 3, text: "Har du svårt att hålla dig vaken under lugna aktiviteter som att läsa, se på TV eller delta i möten?" },
+  { text: "Har du någonsin somnat eller slumrat till under aktiviteter som kräver vaksamhet (t.ex. bilkörning)?" },
+  { text: "Om du kör bil, kan du köra 100 km utan att känna dig trött?" },
+  { text: "Somnar du lätt under resor (t.ex. tåg eller flyg)?" },
+  { text: "Känner du dig ofta rastlös, otålig eller gör flera saker samtidigt?" },
+  { text: "Känner du ofta brist på energi?" },
+  { text: "Brukar du ta tupplurar under dagen? Om ja: vid vilken tid och hur länge? Känner du dig utvilad efteråt?" },
+  { text: "Sover du bättre när du är ledig (t.ex. helg eller semester) eller sover borta?" },
+  { text: "Varierar din sömnkvalitet beroende på årstid?" },
+  { text: "Använder du ofta sociala medier?" },
+  { text: "Hur många timmar per dag tillbringar du ungefär online (dator och mobil)?" },
+  { text: "Om du är en kvinna, påverkas din sömn av menstruationscykel, graviditet eller klimakteriet?" },
+
+  
+  // Sektion 4 Social
+  { section: 4, text: "Vad är ditt civilstånd? (ogift, i förhållande, gift, skild, änka/änkling)" },
+  { text: "Har du barn? Om ja: hur många och hur gamla? Har de hälsoproblem eller sömnsvårigheter?" },
+  { text: "Är du nöjd med ditt familjeliv?" },
+  { text: "Är du nöjd med din boendesituation eller upplever du stress (t.ex. renovering, flyttplaner)?" },
+  { text: "Blir du störd av miljöfaktorer? (t.ex. buller, grannar eller andra störningar)" },
+  { text: "Vad arbetar du med?" },
+  { text: "Är du anställd, egenföretagare, pensionär, sjukskriven eller arbetssökande?" },
+  { text: "Har du fasta arbetstider? Om inte, vilka tider arbetar du vanligtvis?" },
+  { text: "Arbetar du ofta kvällar eller helger?" },
+ { text: "Har du någonsin haft ett arbete med mycket oregelbundna arbetstider? I så fall, när, hur länge och kan du beskriva det?"},
+  { text: "Är du nöjd med ditt arbete?" },
+  { text: "Innebär ditt arbete stort ansvar eller stress?" },
+  { text: "Känner du dig uppskattad av dina kollegor?" },
+  { text: "Är du nöjd med din ekonomiska situation eller känner du ekonomisk stress?" },
+
+  // Sektion 5 Överkonsumtion
+  { section: 5, text: "Hur många koppar kaffe dricker du per dag?" },
+  { text: "Vid vilken tid på dagen dricker du din sista kopp kaffe?" },
+  { text: "Dricker du ofta andra koffeinhaltiga drycker (choklad, te, läsk)?" },
+  { text: "Röker du eller använder du snus? Om ja: hur mycket per dag eller vecka, och vid vilken tid tar du sista dosen?" },
+  { text: "Dricker du alkohol? Om ja: hur ofta och hur mycket?" },
+
+  // Sektion 6 Överkänslighet
+  { section: 6, text: "Lider du av astma eller allergier (säsongsbundna eller andra)? Om ja: kan du beskriva dem?" },
+
+  // Sektion 7 Aktuell medicin
+  { section: 7, text: "Tar du receptfria sömnmedel eller naturläkemedel för sömn? Om ja, vilka?" },
+  { text: "Tar du andra läkemedel för icke-sömntillstånd (t.ex. blodtryck, diabetes, sköldkörtel)? Om ja, vilka?" },
+  { text: "Tar du vitaminer eller kosttillskott? Om ja, vilka?" },
+  { text: "Använder du ibland rekreationssubstanser som kan påverka sömnen (t.ex. cannabis)?" },
+  { text: "Använder du appar eller enheter för att följa din sömnkvalitet? Om ja, vad visar de (snarkning, apnéer, sömnkvalitet)?" },
+
+  // Sektion 8 Tid sjukdomar
+  { section: 8, text: "När gjorde du senast en allmän hälsokontroll?" },
+  { text: "Har du gjort blodprov de senaste månaderna? Om ja, vad visade de?" },
+  { text: "Känner du till om du har högt blodtryck, diabetes, sköldkörtelproblem eller andra sjukdomar?" },
+  { text: "Har du genomgått operationer eller haft sjukdomar de senaste åren som kan påverka sömnen (t.ex. covid-19, infektioner)?" },
+  { text: "Har du konsulterat psykolog eller psykiater? Om ja: när och varför? Vilken behandling följde du (psykoterapi, psykoanalys, läkemedel)? Pågår behandlingen fortfarande?" },
+
+  // Sektion 9 Aktuellt tillstånd
+  { section: 9, text: "Har du några av följande symtom under dagen (ej nattetid)?" },
+  { text: "Huvudvärk?" },
+  { text: "Yrsel eller balansproblem?" },
+  { text: "Öronsusningar (tinnitus)?" },
+  { text: "Domningar eller stickningar?" },
+  { text: "Matsmältningsproblem (t.ex. uppblåsthet, halsbränna, diarré/förstoppning)?" },
+  { text: "Hjärtklappning eller panikattacker?" },
+  { text: "Blir du lätt andfådd eller hostar ofta?" },
+  { text: "Har du rygg-, ben- eller muskelsmärtor?" },
+  { text: "Har du gått upp eller ner i vikt de senaste tre månaderna?" },
+  { text: "Blir du ofta förkyld eller infekterad?" },
+  { text: "Har du ofta nästäppa?" },
+  { text: "Tränar du regelbundet? Om ja: vilken aktivitet och när på dagen?" },
+  { text: "Om du är kvinna har du besvär PMS (premenstruellt syndrom)? Hur regelbunden är din menstruation?" },
+
+  // Sektion 10 Cirkadisk/extern påverkan
+  { section: 10, text: "Vid vilken tid på dagen känner du dig mest energisk, och när är du som tröttast?" },
+  { text: "Ser du dig själv som en morgon- eller kvällsmänniska?" },
+  { text: "Märker du humörsvängningar beroende på årstid?" },
+  { text: "Har du svårt att anpassa dig till tidsförändringar (jetlag, skiftarbete)?" },
+  { text: "Är dina sömnmönster varierande beroende på dag?" },
+
+  // Sektion 11 Kost
+  { section: 11, text: "Vilken kost följer du? (omnivor, vegetarian, vegan, annat)" },
+  { text: "Äter du frukost? Om ja, vid vilken tid?" },
+  { text: "Äter du måltider vid regelbundna tider (lunch, middag)?" },
+  { text: "Äter du ofta tunga eller kryddstarka middagar?" },
+  { text: "Äter du ofta sent på kvällen (efter kl. 20)?" },
+  { text: "Äter du ibland under natten om du inte kan sova?" },
+  { text: "När på dagen är du som mest aktiv (morgon, mitt på dagen, kväll, natt)?" },
+
+  // Sektion 12 Familj/hereditet
+  { section: 12, text: "Har du syskon? Är de friska? Har de sömnproblem eller psykiska besvär?" },
+  { text: "Hade dina föräldrar under sin aktiva tid problem som fetma, snarkning, sömnighet, insomni, depression eller högt blodtryck? Vem?" },
+  { text: "Finns det återkommande sjukdomar i familjen (föräldrar, mor-/farföräldrar, syskon) såsom sömnstörningar, humörstörningar, depression, hjärtproblem eller annat?" },
+
+  // Sektion 13 Uppväxt/Utveckling
+  { section: 13, text: "Hur var din sömn som barn, före puberteten?" },
+  { text: "Hade du ofta mardrömmar som du fortfarande minns?" },
+  { text: "Snarkade du eller gnisslade tänder i sömnen?" },
+  { text: "Hade du ofta nattskräck, somnambulism eller pratade i sömnen?" },
+  { text: "Kissade du i sängen efter 5 års ålder?" },
+  { text: "Var din barndom harmonisk?" },
+  { text: "Var du ett friskt eller skört barn?" },
+  { text: "Hade du svårigheter i skolan (t.ex. mobbning)?" },
+  { text: "Förändrades din sömn efter puberteten (t.ex. svårare att somna, svårt att vakna på morgonen)?" },
+  { text: "Hade du ätstörningar eller humörproblem som tonåring?" },
+  { text: "Hur var din sömn under tonåren?" },
+  { text: "Var du ofta sömnig i klassrummet under studietiden?" },
+  { text: "Avslutade du dina studier? Vad gjorde du därefter (arbete, utbildning etc.)?" },
+  { text: "När gifte du dig eller flyttade ihop med en partner?" },
+  { text: "Förändrades dina sömnvanor i samband med detta?" },
+  { text: "Om du har barn, hur var de som spädbarn? Påverkade det din sömn?" },
+  { text: "Har du arbetat natt eller haft stora skiftändringar? När och hur länge? Hur påverkade det din sömn?" },
+  { text: "Har någon händelse de senaste 10 åren (t.ex. skilsmässa, sjukdom, arbetslöshet, sorg, stress, utbrändhet) påverkat dig särskilt mycket?" },
+
+  // Sektion 14 Sömn
+  { section: 14, text: "Är ditt sovrum bekvämt (temperatur, säng, mörker, ljud)? Om inte, vad saknas?" },
+  { text: "Delar du sovrum? Om ja, störs du av din partner (snarkningar, rörelser)?" },
+  { text: "Har du husdjur i sovrummet? Om ja, stör de dig?" },
+  { text: "Använder du skärmar/TV eller mobil före sänggåendet? Hur länge?" },
+  { text: "Använder du ofta mobilen i sängen (nyheter, mejl, avslappning/hypnos)?" },
+  { text: "Går du och lägger dig för att det är dags eller för att du känner dig sömnig?" },
+
+// insomnia
+  { text: "Känner du ångest eller oro vid sänggåendet?" },
+  { text: "Tar det mer än 30 minuter att somna?" },
+  { text: "Vaknar du ofta under natten? Om ja, efter hur lång tid och har du svårt att somna om?" },
+  { text: "Vaknar du ofta för tidigt på morgonen?" },
+  { text: "Vaknar du spontant eller behöver du alarm? Måste alarmet ringa flera gånger?" },
+ { text: "När du vaknar på morgonen, hur lång tid tar det för dig att bli alert?" },
+  { text: "Under en vecka med sju nätter, hur många morgnar vaknar du och känner dig utvilad?" },
+  { text: "Har du identifierat faktorer som bidrar till dina sömnbesvär (t.ex. oro, grubblerier, smärta)?" },
+
+//snark - apneer
+  { text: "Snarkar du ofta?" },
+  { text: "Har någon observerat andningsuppehåll (apnéer) under din sömn?" },
+  { text: "Vaknar du under natten med halsbränna, känsla av kvävning, hjärtklappning eller svettningar" },         
+  { text: "Har du ofta huvudvärk på morgonen?" },
+  { text: "Behöver du gå upp för att kissa på natten? Hur ofta?" },
+  { text: "Vaknar du med torr mun?" },
+
+// Parasomni
+  { text: "Pratar eller ropar du i sömnen?" },
+  { text: "Går du i sömnen?" },
+  { text: "Utför du handlingar i sömnen som du inte minns på morgonen (t.ex. äta, flytta saker)?" },
+  { text: "Har du nattskräck med plötsliga uppvaknanden och förvirring eller rädsla?" },
+  { text: "Har du förvirring eller stark oro under natten?" },
+  { text: "Drömmer du mycket?" },
+  { text: "Upplever du att dina drömmar är livliga eller verklighetstrogna?" },
+  { text: "Har du ofta obehagliga drömmar eller mardrömmar?" },
+  { text: "Vaknar du av dina drömmar?" },
+  { text: "Har du haft klardrömmar (medveten om att du drömmer)?" },
+  { text: "Följs dina drömmar av rörelser, ljud eller oro i sömnen?" },
+ 
+//PLM-RLS
+  { text: "Gnisslar du tänder eller biter ihop käkarna under sömnen?" },
+  { text: "Har du ofta ofrivilliga benrörelser eller ryckningar under natten, som du själv eller din partner har lagt märke till?"},
+  { text: "Har du ofta benkramper under natten?" },
+  { text: "Känner du på kvällen ett starkt behov av att röra benen (restless legs)? Lättar det när du rör på dem?" },
+
+// RBD
+  {text: "Har du eller din partner märkt att du rör dig mycket i sömnen (t.ex. sparkar, fäktar, pratar eller ropar)?" },
+  { text: "Har du någonsin skadat dig själv eller din partner under sömnen på grund av rörelser?" },
+  { text: "Verkar dina rörelser eller ljud följa det du drömmer (t.ex. att du slåss eller flyr)?" },
+  { text: "Har du vaknat ur drömmar medan du rört dig eller ropat?" },
+  { text: "Har du märkt att dessa episoder har blivit vanligare med tiden?" },
+
+// Narkolepsi
+  { text: "Somnar du plötsligt under dagen?" },
+  { text: "Tar du regelbundet korta tupplurar som känns särskilt återhämtande?" },
+  { text: "Har du upplevt plötslig muskelsvaghet vid starka känslor, till exempel skratt, ilska, överraskning eller rädsla?" },
+  { text: "Har du haft sömnparalys (kan inte röra dig vid insomning eller uppvaknande)?" },
+  { text: "Har du hallucinationer vid insomning eller uppvaknande?" },
+  { text: "Har du svårt att hålla dig vaken i lugna situationer (t.ex. TV, möten, läsning)?" },
+  { text: "Finns det familjehistoria med narkolepsi eller andra sömnstörningar?" },
+  { text: "Är din nattsömn ofta fragmenterad av upprepade uppvaknanden?" },
+  { text: "Påverkar din dagtrötthet arbete, studier eller körning?" },
+ 
+// Sektion 15 Kognition/personlighet
+  { section: 15, text: "Upplever du försämrat minne eller koncentrationssvårigheter?" },
+  { text: "Är du ängslig, orolig eller nedstämd?" },
+  { text: "Känner du att du drar dig tillbaka socialt (t.ex. om en vän föreslår att gå ut, säger du 'nej' oftare nu)?" },
+  { text: "Hur är din aptit?" },
+ { text: "Har du upplevt minskad lust eller förändringar i din sexuella hälsa?"},
+  { text: "Upplever du tvångskänslor, t.ex. behov av att tvätta händerna ofta, kontrollera dörrar, räkna steg osv.?" },
+  { text: "Är du mer inåtriktad eller utåtriktad?" },
+  { text: "Är du pedantisk, vill du ha kontroll och är du ambitiös?" },
+  { text: "Vad har du för intressen eller hobbyer?" }, 
+];  
+
+window.questions = questions;
+
+// ===== ATTR (1-based) → sets 0-based =====
+(function(){
+  const to0 = a => new Set(
+    (a || [])
+      .map(n => parseInt(n, 10))
+      .filter(Number.isFinite)
+      .map(n => n - 1)
+      .filter(n => n >= 0)
+  );
+
+  const ATTR = {
+    notables: [
+      8,11,13,14,15,16,17,18,19,
+      21,22,23,25,34,48,55,
+      56,57,58,59,60,61,62,64,65,69,
+      70,71,74,75,
+      76,77,82,
+      83,84,85,88,
+      92,
+      102,
+      103,107,
+      114,115,116,119,
+      122,
+      126,127,128,131,120,
+      132,133,135,137,138,139,141,142,144,151
+    ],
+    mixed: [29,30,59,62,84,94,103,114,116,135],
+    verbal1: [
+      28,29,30,
+      36,37,38,39,86,89,
+      90,
+      105,
+      112,113,
+      117,118,119,123,
+      124,125,130,
+      134,136,
+      140,145,146,147,
+      148,150
+    ],
+    verbal2: [81,91,149]
+  };
+
+  window.NOTABLES_SET    = to0(ATTR.notables);
+  window.MIXED_QUESTIONS = to0(ATTR.mixed);
+  window.VERBAL1_SET     = to0(ATTR.verbal1);
+  window.VERBAL2_SET     = to0(ATTR.verbal2);
+
+  // Toute question VERBAL1, VERBAL2 ou MIXTE est aussi une question à score
+  for (const i of window.MIXED_QUESTIONS) window.NOTABLES_SET.add(i);
+  for (const i of window.VERBAL1_SET)     window.NOTABLES_SET.add(i);
+  for (const i of window.VERBAL2_SET)     window.NOTABLES_SET.add(i);
+})();
+
+
+// ===== Scale labels =====
+const SCALE_LABELS = CONFIG_SCALE_LABELS;
+// ===== Persistent state for resume (up to 5 hours) =====
+const FORM_ID = CONFIG_FORM_ID;
+
+function sameDayOrWithinHours(tIso, maxHours){
+  try{
+    if (!tIso) return false;
+    const t   = new Date(tIso);
+    const now = new Date();
+    const diffMs = now - t;
+    const diffH  = diffMs / (1000*60*60);
+    return diffH >= 0 && diffH <= maxHours;
+  }catch(e){
+    console.warn("sameDayOrWithinHours error", e);
+    return false;
+  }
+}
+
+function saveState(){
+  try{
+    if (!userCode) return;
+    const key = FORM_ID + "_" + userCode;
+    const state = {
+      formId:   FORM_ID,
+      code:     userCode,
+      lang:     currentLang,
+      currentQ: currentQuestion,
+     answers: answers,
+draft: {
+  text: document.getElementById("answerInput").value,
+  score: document.getElementById("scoreInput").value,
+  scoreVisible:
+    document.getElementById("scoreContainer").style.display !== "none"
+},
+savedAt: new Date().toISOString() 
+    };
+    localStorage.setItem(key, JSON.stringify(state));
+  }catch(e){
+    console.warn("saveState error", e);
+  }
+}
+
+
+function applyScaleLabels(i){
+  try{
+    const L = SCALE_LABELS[currentLang] || SCALE_LABELS.sv;
+    // par d faut: num rique
+    let labels = L.numeric;
+
+    // si la question est marquee verbal2/verbal1 ?  crase numeric
+    if (window.VERBAL2_SET && window.VERBAL2_SET.has(i)) {
+      labels = L.verbal2;
+    } else if (window.VERBAL1_SET && window.VERBAL1_SET.has(i)) {
+      labels = L.verbal1;
+    }
+
+    const hint = document.getElementById("scoreLabel");
+    if (hint){
+      hint.textContent = L.help + ": " + labels.map((x,idx)=> (idx+1)+"="+x).join(", ");
+    }
+
+    const si = document.getElementById("scoreInput");
+    if (si){ si.min="1"; si.max="5"; }
+  }catch(_){}
+}
+
+// ===== SKIP config =====
+window.SECTIONS_SKIP = [];
+window.SKIP_QUESTIONS = [];
+
+//example window.SKIP_QUESTIONS = [7,16,32];      // Q7 ET Q32 sauteNT A LA SECTION SUIVANTE -Q16 saute a une autre question Q18 mais dans la MEME section
+//window.SKIP_MAP = {16: 18,  // Q16 non/1 → aller à Q18 (skip Q17)
+//};
+
+(function markSkips(){
+  let first = {}; for (let i=0;i<questions.length;i++){ const s=questions[i].section; if (!s) continue; if (first[s]===undefined) first[s]=i; }
+  (window.SECTIONS_SKIP||[]).forEach(sec=>{ const i = first[sec]; if (typeof i==="number") questions[i].skipIfNon = true; });
+  (window.SKIP_QUESTIONS||[]).forEach(qn=>{ const i = qn-1; if (i>=0 && i<questions.length) questions[i].skipIfNon = true; });
+})();
+
+window.CONDITIONAL_SKIP_RULES = [
+  { ifQuestion: 2, equals: "man", skipQuestions: [69] },
+];
+
+// ===== State & flow =====
+let currentQuestion=0, currentSection=1, paused=false;
+let answers = [], userCode = "";
+
+// Helpers
+function sectionOf(i){ let s=currentSection; for (let k=i;k>=0;k--){ if (typeof questions[k].section!=="undefined"){ s=questions[k].section; break; } } return s; }
+function isMixed(i){ return window.MIXED_QUESTIONS.has(i); }
+function isNotable(i){ return window.NOTABLES_SET.has(i); }
+function isSkipQuestion(i){ return !!(questions[i] && questions[i].skipIfNon); }
+function updateProgress(){ const p=(currentQuestion/Math.max(1,questions.length))*100; document.getElementById("progressBar").style.width = p+"%"; }
+function openScoreFor(i){ document.getElementById("scoreContainer").style.display="block"; applyScaleLabels(i); }
+
+function shouldConditionallySkip(questionIndex){
+  const questionNumber = questionIndex + 1;
+  for (const rule of (window.CONDITIONAL_SKIP_RULES || [])) {
+    if (!rule.skipQuestions || !rule.skipQuestions.includes(questionNumber)) {
+      continue;
+    }
+
+    const sourceIndex = rule.ifQuestion - 1;
+    const sourceAnswer =
+      (answers[sourceIndex] && answers[sourceIndex].text)
+        ? String(answers[sourceIndex].text).trim().toLowerCase()
+        : "";
+    if (rule.equals !== undefined &&
+        sourceAnswer === String(rule.equals).trim().toLowerCase()) {
+      return true;
+    }
+    if (rule.contains !== undefined &&
+        sourceAnswer.includes(String(rule.contains).trim().toLowerCase())) {
+      return true;
+    }
+  }
+  return false;
+}
+
+ function renderQuestion(){
+  while (
+    currentQuestion < questions.length &&
+    shouldConditionallySkip(currentQuestion)
+  ){
+    currentQuestion += 1;
+  }
+  window.currentQuestion = currentQuestion;
+  if (currentQuestion>=questions.length){ show("summary"); renderSummary(); return; } 
+
+  currentSection = sectionOf(currentQuestion);
+  document.getElementById("sectionNum").textContent = "Sektion " + currentSection; 
+document.getElementById("questionNum").textContent =
+  "Fråga " + (currentQuestion+1) + "/" + questions.length;
+ 
+document.getElementById("questionText").textContent = questions[currentQuestion].text || "";
+
+  document.getElementById("answerInput").value = "";
+// Texte du placeholder selon la langue actuelle
+  const placeholderMap = {
+    sv: "Skriv ditt svar här…",
+    fr: "Écrivez votre réponse ici…",
+    en: "Type your answer here…"
+  };
+// Normaliser currentLang → sv / fr / en
+  let langKey = currentLang || "en";
+  if (langKey === "Svenska")   langKey = "sv";
+  if (langKey === "Français")  langKey = "fr";
+  if (langKey === "English")   langKey = "en";
+
+  const ph = placeholderMap[langKey] || placeholderMap.en;
+
+  document.getElementById("answerInput").placeholder = placeholderMap[currentLang];
+  // FIN placeholder multilingue
+
+  document.getElementById("mainErrorMsg").textContent = "";
+  document.getElementById("scoreContainer").style.display="none";
+  document.getElementById("scoreInput").value="";
+
+  document.getElementById("mainErrorMsg").textContent = "";
+  document.getElementById("scoreContainer").style.display="none";
+  document.getElementById("scoreInput").value="";
+ // Remplace l’ancien bloc dans renderQuestion()
+
+// gestion affichage score selon type
+if (isMixed(currentQuestion)) {
+    // question MIXTE : on attend d’abord la réponse écrite
+    document.getElementById("scoreContainer").style.display = "none";
+}
+else if (isNotable(currentQuestion)) {
+    // question NOTABLE simple : on affiche le score immédiatement
+    openScoreFor(currentQuestion);
+    setTimeout(()=>{
+      const si=document.getElementById("scoreInput");
+      if (si){ si.focus(); si.select(); }
+    },50);
+}
+
+  updateProgress();
+  const ans = document.getElementById("answerInput"); if (ans){ ans.focus(); ans.scrollIntoView({block:"center"}); }
+}
+
+function handleSkipIfNeeded(text, score){
+  const sRaw = (text||"");
+  const sText = sRaw.trim().toLowerCase();
+  const textIsOne = /^\s*1[\s\.\,\;\:!?\)]*$/.test(sText);
+  const saysNo = /^(nej|non|no)\b/.test(sText) || textIsOne;
+  const scoreIsOne = (Number(score)===1);
+
+  const firstOfSection = (currentQuestion===0) || (sectionOf(currentQuestion)!==sectionOf(currentQuestion-1));
+  const sec = sectionOf(currentQuestion);
+  const sectionFlagged = Array.isArray(window.SECTIONS_SKIP) && window.SECTIONS_SKIP.includes(sec);
+  const questionFlagged = isSkipQuestion(currentQuestion);
+  const wantsSkip = questionFlagged || (firstOfSection && sectionFlagged);
+
+  if (wantsSkip && (saysNo || scoreIsOne)){
+    const qn = currentQuestion + 1;
+
+  // 1) SKIP ciblé prioritaire
+  if (window.SKIP_MAP && window.SKIP_MAP[qn]) {
+    currentQuestion = window.SKIP_MAP[qn] - 1;
+    return true;
+  }
+
+  // 2) Sinon:= ancien comportement (skip section)
+  let i = currentQuestion + 1;
+  while (i < questions.length && sectionOf(i) === sec) i++;
+  currentQuestion = i;
+  return true;
+}
+  return false;
+}
+
+// Validate text
+function onValidateText(){
+  if (paused) return;
+  const v = (document.getElementById("answerInput").value || "").trim();
+  answers[currentQuestion] = answers[currentQuestion] || { text: null, score: null };
+  answers[currentQuestion].text = v || null;
+
+  if (isMixed(currentQuestion)) {
+    openScoreFor(currentQuestion);
+    const si = document.getElementById("scoreInput");
+    if (si) { setTimeout(() => { si.focus(); si.select(); }, 50); }
+    return;
+  }
+
+  if (handleSkipIfNeeded(v, null)) { renderQuestion(); return; }
+  currentQuestion += 1; renderQuestion();
+}
+
+
+function getScaleErrorMessage(){
+  if (currentLang === "fr"){
+    return "Veuillez entrer un chiffre entre 1 et 5.";
+  }
+  if (currentLang === "en"){
+    return "Please enter a number between 1 and 5.";
+  }
+  // défaut = suédois
+  return "Ange en siffra mellan 1 och 5.";
+}
+
+function playBeep(){
+  try{
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    const ctx  = new Ctx();
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = 880;
+    gain.gain.value = 0.1;
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    setTimeout(()=>{
+      osc.stop();
+      ctx.close();
+    }, 150);
+  }catch(_){}
+}
+
+  // Validate score
+function onValidateScore(){
+  if (paused) return;
+
+  const si  = document.getElementById("scoreInput");
+  const msg = document.getElementById("mainErrorMsg");
+  if (!si) return;
+
+  const raw = (si.value || "").trim();
+
+  // n'accepte qu'un SEUL chiffre entre 1 et 5
+  if (!/^[1-5]$/.test(raw)){
+    if (msg){
+      msg.textContent = getScaleErrorMessage();
+      msg.style.color = "red";
+    }
+    playBeep();
+    si.focus();
+    if (si.select) si.select();
+    return;
+  }
+
+  const v = parseInt(raw, 10);
+  answers[currentQuestion] = answers[currentQuestion] || { text:null, score:null };
+  answers[currentQuestion].score = v;
+
+  const t = answers[currentQuestion].text || "";
+  if (handleSkipIfNeeded(t, v)){
+    renderQuestion();
+    return;
+  }
+  currentQuestion += 1;
+  renderQuestion();
+}
+
+function gotoQuestion(i){
+  try{
+    if (!(i>=0 && i<questions.length)) return;
+    currentQuestion = i;
+    show('main');
+    renderQuestion();
+    const a = answers[i] || {};
+    if (a.text) { const t=document.getElementById('answerInput'); if(t){ t.value=a.text; } }
+    if (typeof a.score === 'number'){
+      const sc=document.getElementById('scoreContainer'); if(sc){ sc.style.display='block'; }
+      const si=document.getElementById('scoreInput'); if(si){ si.value=String(a.score); }
+    } else {
+      // if notable question, keep scale visible and focus it
+      if (typeof isNotable==='function' && isNotable(i)) { openScoreFor(i); }
+    }
+
+    // focus the appropriate field
+    const sc=document.getElementById('scoreContainer');
+    const target = (sc && sc.style.display!=='none') ? document.getElementById('scoreInput') : document.getElementById('answerInput');
+    if (target){ try{ target.focus(); if(target.select) target.select(); }catch(_){} }
+  }catch(_){/*noop*/}
+}
+
+function buildPrintView(){
+  const L = PRINT[currentLang] || PRINT.sv;
+  document.getElementById('printTitle').textContent = L.title;
+  document.getElementById('printCode').textContent  = L.code + ': ' + (userCode || '');
+  const box = document.getElementById('printList');
+  box.innerHTML = '';
+
+  const ol = document.createElement('ol');
+
+  (answers || []).forEach((a, i)=>{
+    const li = document.createElement('li');
+
+    const rawQ = (questions[i] && questions[i].text) ? questions[i].text : '';
+    const rawA = (a && a.text ? a.text : '');
+    const sc   = (a && typeof a.score === 'number') ? ('  -  ' + a.score) : '';
+
+    // === LA LOGIQUE CORRECTE ===
+    // mode sécurisé  → brouillage
+    // mode ouvert    → texte en clair
+    const qText = CONFIG_SECURE_EXPORT ? scrambleText(rawQ) : rawQ;
+    const aText = CONFIG_SECURE_EXPORT ? scrambleText(rawA) : rawA;
+
+    const qDiv = document.createElement('div');
+    qDiv.textContent   = qText;
+    qDiv.style.fontWeight = '600';
+
+    const rDiv = document.createElement('div');
+    rDiv.textContent = L.answer + ': ' + aText + sc;
+    rDiv.style.margin = '2px 0 10px 0';
+
+    li.appendChild(qDiv);
+    li.appendChild(rDiv);
+    ol.appendChild(li);
+  });
+
+  box.appendChild(ol);
+}
+
+function renderSummary(){
+  document.getElementById('resumeCode').textContent = userCode;
+  const ul = document.getElementById('answersList');
+  ul.innerHTML = '';
+const total = questions.length;   // nombre total de questions
+
+  answers.forEach((a,i)=>{
+    const qtext = (questions[i] && questions[i].text) ? questions[i].text : '—';
+    const li = document.createElement('li');
+    li.style.marginBottom = '14px';
+    const line = document.createElement('div');
+    line.style.fontWeight = '600';
+
+// Détection de la première question d'une section
+let sec = questions[i].section !== undefined ? questions[i].section : null;
+let firstOfSection = false;
+
+if (sec !== null) {
+  // si c'est la première question OU si la question précédente appartient à une autre section
+  if (i === 0 || questions[i-1].section !== sec) {
+    firstOfSection = true;
+  }
+}
+
+// Ajout du numero de question
+if (firstOfSection) {
+  line.textContent = "Section " + sec + ", " + (i + 1) + "/" + total + " – " + qtext;
+} else {
+  line.textContent = (i + 1) + "/" + total + " – " + qtext;
+}
+    // Pour garder a la fin lors de la correction le texte "svar/answer/reponse" apres chaue question eelver les //
+    //const tLabel = document.createElement('div');
+    //tLabel.style.marginTop = '6px';
+ //tLabel.textContent = PRINT[currentLang].answer + ":";
+   // tLabel.textContent = 'Svar:';
+
+
+// zone de reponse uniquement plus de "svar/aswer/repnse") et largeur de la zone de reponse
+    const tArea = document.createElement('textarea');
+    tArea.style.width = '95%';
+    tArea.style.minHeight = '30px';
+    tArea.style.fontSize = '0.9em';
+tArea.style.padding = '4px';
+
+    tArea.value = (a && typeof a.text==='string') ? a.text : '';
+    tArea.addEventListener('input', ()=>{ answers[i] = answers[i] || {text:null,score:null}; answers[i].text = tArea.value.trim() || null; });
+    li.appendChild(line);
+    li.appendChild(tArea);
+
+    // Score editor only for notable or mixed questions
+    let showScore = false;
+    try{
+      showScore = (typeof isNotable==='function' && isNotable(i)) || (typeof isMixed==='function' && isMixed(i));
+    }catch(_){ showScore = false; }
+    if (showScore){
+      const sWrap = document.createElement('div');
+      sWrap.style.marginTop = '6px';
+      const sLabel = document.createElement('label'); sLabel.textContent = 'Score (1–5): ';
+
+//taille du champ de score
+const sInput = document.createElement('input');
+sInput.type = 'number';
+sInput.min = '1';
+sInput.max = '5';
+sInput.style.width = '35px';         // largeur plus compacte
+sInput.style.textAlign = 'center';   // centrage du chiffre
+sInput.style.fontSize = '0.9em';     // police plus petite
+sInput.style.padding = '2px 3px';    // marges internes r duites
+sInput.style.borderRadius = '6px';   // coins arrondis
+
+      sInput.value = (a && typeof a.score==='number') ? String(a.score) : '';
+      sInput.addEventListener('input', ()=>{
+        const v = parseInt(sInput.value,10);
+        answers[i] = answers[i] || {text:null,score:null};
+        if (v>=1 && v<=5) { answers[i].score = v; } else if (isNaN(v)) { answers[i].score = null; }
+      });
+      sWrap.appendChild(sLabel); sWrap.appendChild(sInput);
+      li.appendChild(sWrap);
+    }
+    ul.appendChild(li);
+  });
+ // Placeholder de la zone COMMENTAIRES 
+   const commentBox = document.getElementById("globalComment");
+  if (commentBox && M[currentLang].answerPlaceholder){
+    commentBox.placeholder = M[currentLang].answerPlaceholder;
+  }
+} 
+
+// ← FIN DE renderSummary()
+
+
+// ===== Show/hide texte dans banderolle + bouton d'aide =====
+function show(id){
+  // Montrer / cacher les écrans principaux
+  ["menuScreen","introScreen","main","summary"].forEach(k=>{
+    const el = document.getElementById(k);
+    if (el) el.style.display = (k===id) ? "block" : "none";
+  });
+
+  // homeTitle seulement sur la page d'accueil
+  const homeTitle = document.getElementById("homeTitle");
+  if (homeTitle){
+    homeTitle.style.display = (id === "menuScreen") ? "block" : "none";
+  }
+
+
+// === Header fixé uniquement sur la page finale ===
+const header = document.querySelector("header");
+
+if (header){
+  if (id === "summary") {
+
+    header.classList.add("header-fixed");
+
+    // hauteur réelle du header (variable selon la langue)
+    const h = header.offsetHeight;
+
+    let spacer = document.getElementById("headerSpacer");
+    if (!spacer){
+      spacer = document.createElement("div");
+      spacer.id = "headerSpacer";
+      header.insertAdjacentElement("afterend", spacer);
+    }
+
+    // appliquer la hauteur du spacer
+    // Si header est fixed, il faut TOUJOURS un spacer
+    spacer.style.height = h + "px";
+  } else {
+
+    header.classList.remove("header-fixed");
+    const spacer = document.getElementById("headerSpacer");
+    if (spacer) spacer.remove();
+  }
+}
+
+// === Texte dans la banderolle (homeSub1) ===
+const banner = document.getElementById("homeSub1");
+if (banner){
+  if (id === "summary") {
+
+    // Titre dynamique (langue active)
+    const title = CONFIG_M[currentLang]?.summaryTitle || "";
+
+    // Texte explicatif (HTML déjà formaté)
+    const txt = FINAL_RECO?.[currentLang] || "";
+
+    banner.innerHTML =
+      `<div style="font-weight:800; margin-bottom:6px;">${title}</div>` +
+      txt;
+
+  } else {
+    banner.textContent = CONFIG_M[currentLang]?.sub1 || "";
+  }
+}
+
+// === Eviter le double titre sur la page finale ===
+const st = document.getElementById("summaryTitle");
+if (st) st.style.display = (id === "summary") ? "none" : "block";
+
+
+  // === Masquer la validité sur la page finale ===
+  const validityBox = document.getElementById("validityLines");
+  if (validityBox) {
+    if (id === "summary") {
+      validityBox.style.display = "none";
+    } else {
+      validityBox.style.display = "block";
+    }
+  }
+
+  // === Montrer / cacher le bouton AIDE ===
+  const helpBtn   = document.getElementById("helpBtn");
+  const helpPanel = document.getElementById("helpPanel");
+  if (helpBtn){
+    if (id === "summary") {
+      // CACHER sur la page finale
+      helpBtn.style.display = "none";
+      if (helpPanel){
+        helpPanel.style.display = "none"; // fermer l’aide si ouverte
+      }
+    } else {
+      // MONTRER ailleurs (accueil, intro, questions)
+      helpBtn.style.display = "inline-block";
+    }
+  }
+}
+
+
+// ===== App init =====
+document.addEventListener("DOMContentLoaded", ()=>{
+  // Header
+   // Header dynamique selon la langue et le programme actif
+  let prefix;
+  if (currentLang === "fr") {
+    prefix = "Questionnaire ";
+  } else if (currentLang === "en") {
+    prefix = "Questionnaire ";
+  } else {
+    prefix = "Frågeformulär ";
+  }
+
+  const mainTitle = prefix + CONFIG_ACTIVE_FORM;
+document.getElementById("mainTitle").textContent = mainTitle;
+document.getElementById("versionNum").textContent = CONFIG_VERSION_LABEL;
+
+// Titre de l’onglet (pageTitle)
+document.getElementById("pageTitle").textContent =
+  mainTitle + " — " + CONFIG_VERSION_LABEL;
+
+// Footer dynamique
+// Footer dynamique
+document.getElementById("footerProgram").textContent =
+  "© 2026 Swedsleep — " + CONFIG_ACTIVE_FORM + " " + CONFIG_VERSION_LABEL;
+
+
+  document.getElementById("homeTitle").textContent = M[currentLang].homeTitle;
+  document.getElementById("homeSub1").textContent = M[currentLang].sub1;
+
+  // voices
+  if (window.speechSynthesis){
+    speechSynthesis.onvoiceschanged = updateVoiceStatus;
+    setTimeout(updateVoiceStatus, 800);
+  } else {
+    // au cas où, met à jour le champ même sans speechSynthesis
+    updateVoiceStatus();
+  }
+  document.getElementById("voiceTestBtn").addEventListener("click", speakSample);
+
+  // Fill selects
+ const qSel  = document.getElementById("questionnaireSelect");
+const forms = CONFIG_FORMS;
+const t = M[currentLang];
+
+forms.forEach(v=>{
+  const o = document.createElement("option");
+  o.value = v;
+  // seul le formulaire actif n’est PAS marqué "indisponible"
+  o.text  = v + (v === CONFIG_ACTIVE_FORM ? "" : t.notAvailableTri);
+  if (v === CONFIG_ACTIVE_FORM) o.selected = true;
+  qSel.appendChild(o);
+});
+ const langSel = document.getElementById("langSelect");
+
+["Svenska","Français","English"].forEach((L)=>{
+  const o = document.createElement("option");
+  o.text = L;
+
+  // choisir l’option par défaut en fonction de CONFIG_LANG_DEFAULT
+  if (
+    (CONFIG_LANG_DEFAULT === "sv" && L === "Svenska") ||
+    (CONFIG_LANG_DEFAULT === "fr" && L === "Français") ||
+    (CONFIG_LANG_DEFAULT === "en" && L === "English")
+  ){
+    o.selected = true;
+  }
+
+  langSel.appendChild(o);
+});
+langSel.addEventListener("change", ()=>{
+  const label = langSel.value;
+
+  // Convertir label → code interne
+  if (label === "English")   currentLang = "en";
+  else if (label === "Français") currentLang = "fr";
+  else                       currentLang = "sv";
+  renderHomeTexts();
+updateValidityBanner();   // 🔹 mise à jour de la phrase en haut
+  const ms = document.getElementById("microStatus");
+  if (ms) ms.textContent = microStatusText(false);
+
+  updateVoiceStatus();   // <— juste UNE fois ici
+// mettre à jour le texte "valid until" dans la bonne langue
+  updateValidityBanner();
+
+
+  // Update suffixes in the form list when language changes
+  const qSel = document.getElementById("questionnaireSelect");
+  const t2 = M[currentLang];
+  if (qSel && t2){
+    Array.from(qSel.options).forEach(opt=>{
+      opt.text = opt.value + (opt.value === CONFIG_ACTIVE_FORM ? "" : t2.notAvailableTri);
+    });
+  }
+});
+// Premier rendu avec la langue par défaut
+renderHomeTexts();
+const ms0 = document.getElementById("microStatus");
+if (ms0) ms0.textContent = microStatusText(false);
+
+
+// --- Messages localisés pour indisponibilité (langue & formulaire) ---
+function msgLangUnavailable(){
+  switch (currentLang) {
+    case "Français": return "Langue : indisponible (uniquement : Svenska)";
+    case "English":  return "Language: unavailable (only: Svenska)";
+    default:         return "Språk: otillgängligt (endast: Svenska)";
+  }
+}
+function msgChooseActiveForm(){
+  const name = CONFIG_ACTIVE_FORM;
+  if (isFr()) return "Ce questionnaire n’est pas disponible. Veuillez choisir " + name + ".";
+  if (isEn()) return "This questionnaire is not available. Please choose " + name + ".";
+  return "Detta frågeformulär är inte tillgängligt. Välj " + name + ".";
+}
+
+// --- Effacer l’alerte dès qu’on change de langue ---
+(function attachLangClear(){
+  const langSel  = document.getElementById("langSelect");
+  const menuError = document.getElementById("menuError");
+  if (!langSel || !menuError) return;
+  langSel.addEventListener("change", ()=>{
+    // mettre à jour currentLang ailleur
+    menuError.textContent = "";        // (1) efface l’alerte immédiatement
+  });
+})();
+
+
+
+// === Helper pour identifier la langue selectionnee ===
+function isSv(){ return currentLang==="sv" || currentLang==="Svenska"; }
+function isEn(){ return currentLang==="en" || currentLang==="English"; }
+function isFr(){ return currentLang==="fr" || currentLang==="Fran ais" || currentLang==="Fran\u00E7ais"; }
+
+// === Messages localisés ===
+function msgLangUnavailable(){
+  const allowed = CONFIG_ALLOWED_LANGS.join(", ");
+  if (isFr()) return "Langue : indisponible (seulement : " + allowed + ")";
+  if (isEn()) return "Language: unavailable (only: " + allowed + ")";
+  return "Språk: otillgängligt (endast: " + allowed + ")";
+}
+function msgChooseSomn(){
+  if (isFr()) return "Ce questionnaire n est pas disponible. Veuillez choisir SÖMN.";
+  if (isEn()) return "This questionnaire is not available. Please choose SÖMN.";
+  return "Detta frågeformuär är inte tillgängligt. Välj SÖMN.";
+}
+document.getElementById("nextLangBtn").addEventListener("click", ()=>{
+  const qSel = document.getElementById("questionnaireSelect");
+  const menuError = document.getElementById("menuError");
+  if (!qSel || !menuError) return;
+
+  menuError.style.color = "red";
+  menuError.style.fontWeight = "bold";
+
+ if (qSel.value !== CONFIG_ACTIVE_FORM) {
+  menuError.textContent = msgChooseActiveForm();
+  return;
+}
+
+  // Vérifierer si språket är tillåtet enligt CONFIG_ALLOWED_LANGS
+if (!CONFIG_ALLOWED_LANGS.includes(currentLang)) {
+  menuError.textContent = msgLangUnavailable();
+  return;
+}
+
+  // OK → on démarre
+  menuError.textContent = "";
+  show("introScreen");
+  setTimeout(()=>{
+    const ci = document.getElementById("codeInput");
+    if (ci){ ci.focus(); ci.select(); }
+  }, 60);
+});
+
+  // Intro code handling
+  const codeInput = document.getElementById("codeInput");
+  codeInput.addEventListener("input", ()=>{
+    codeInput.value = (codeInput.value.match(/\d/g) || []).join("").slice(0,4);
+  });
+  document.getElementById("startBtn").addEventListener("click", ()=>{
+    const raw = document.getElementById("codeInput").value || "";
+    const normalized = (raw.match(/\d/g) || []).join("");
+    userCode = normalized;
+    if (normalized.length !== CONFIG_CODE_LENGTH){
+      document.getElementById("introErrorMsg").textContent =
+        (currentLang==="sv"
+          ? "Ange en giltig kod (4 siffror)."
+          : (currentLang==="fr"
+              ? "Entrez un code valide (4 chiffres)."
+              : "Enter a valid 4-digit code."));
+   codeInput.focus();       // ← REMET LE CURSEUR AUTOMATIQUEMENT
+  codeInput.select();      // ← (OPTIONNEL) sélectionne ce qui est écrit
+      return;
+    }
+    document.getElementById("introErrorMsg").textContent = "";
+
+    let resumed = false;
+    let resumedDraft = null;
+    try{
+      const key   = FORM_ID + "_" + userCode;
+      const saved = localStorage.getItem(key);
+      if (saved){
+        const state = JSON.parse(saved);
+        const okTime = sameDayOrWithinHours(state.savedAt, CONFIG_PAUSE_HOURS);  // 5 timmar max
+        if (okTime && state.formId === FORM_ID && state.code === userCode){
+          const wantResume = confirm("Vill du återuppta där du slutade?\nReprendre là où vous vous étiez arrêté ?");
+          if (wantResume){
+            currentLang      = state.lang || currentLang;
+            answers          = state.answers || [];
+            currentQuestion  = state.currentQ || 0;
+            resumedDraft = state.draft || null;
+            resumed          = true;
+          } else {
+            localStorage.removeItem(key);
+          }
+        } else {
+          localStorage.removeItem(key);
+        }
+      }
+    }catch(e){
+      console.warn("resume error", e);
+    }
+
+    show("main");
+    renderQuestion();
+if (resumedDraft && currentQuestion < questions.length) {
+  document.getElementById("answerInput").value =
+    resumedDraft.text || "";
+
+  document.getElementById("scoreInput").value =
+    resumedDraft.score || "";
+
+  document.getElementById("scoreContainer").style.display =
+    resumedDraft.scoreVisible ? "block" : "none";
+}
+
+  });
+
+  // Main buttons
+// Sauvegarde automatique pendant le questionnaire
+function autoSaveProgress() {
+  const main = document.getElementById("main");
+
+  if (!userCode || !main || main.style.display === "none") return;
+  if (currentQuestion >= questions.length) return;
+
+  saveState();
+}
+
+// Sauvegarder chaque modification des réponses
+["answerInput", "scoreInput"].forEach(id => {
+  document.getElementById(id).addEventListener(
+    "input",
+    autoSaveProgress
+  );
+});
+
+// Sauvegarder après un clic ou une action au clavier,
+// une fois le changement de question effectué
+document.addEventListener("click", () => {
+  setTimeout(autoSaveProgress, 0);
+});
+
+document.addEventListener("keyup", autoSaveProgress);
+
+// Sauvegarder également quand on quitte la page
+window.addEventListener("pagehide", autoSaveProgress);
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") {
+    autoSaveProgress();
+  }
+});
+
+const instruction = document.getElementById("instructionBox");
+instruction.style.cursor = "pointer";
+
+document.getElementById("answerInput").addEventListener("click", () => {
+  if (document.getElementById("answerInput").value.trim() !== "") {
+    instruction.click();
+  }
+});
+
+instruction.addEventListener("click", () => {
+  if (paused) return;
+
+  const sc = document.getElementById("scoreContainer");
+  if (sc && sc.style.display !== "none") {
+    onValidateScore();
+  } else {
+    onValidateText();
+  }
+});
+
+  document.getElementById("scoreInput").addEventListener("click", () => {
+  if (document.getElementById("scoreInput").value.trim() !== "") {
+    instruction.click();
+  }
+});
+
+  document.getElementById("validerBtn").addEventListener("click", onValidateText);
+  document.getElementById("validateScoreBtn").addEventListener("click", onValidateScore);
+  document.getElementById("corrigerBtn").addEventListener("click", ()=>{
+    if (currentQuestion<=0) return;
+    currentQuestion-=1; renderQuestion();
+    const a=answers[currentQuestion]||{};
+    if (a.text) document.getElementById("answerInput").value=a.text;
+    if (typeof a.score==="number"){ document.getElementById("scoreContainer").style.display="block"; document.getElementById("scoreInput").value=String(a.score); }
+  });
+  let pausedState=false;
+  document.getElementById("pauseBtn").addEventListener("click", ()=>{
+    pausedState = !pausedState;
+    paused      = pausedState;
+    const btn   = document.getElementById("pauseBtn");
+    const panel = document.getElementById("pausePanel");
+    const msg   = document.getElementById("pausePanelMsg");
+    const noBtn = document.getElementById("pauseNoSaveBtn");
+    const svBtn = document.getElementById("pauseSaveBtn");
+
+    const isPaused = pausedState;
+
+    if (isPaused){
+      // Textes multilingues pour la pause
+      let txt, noLabel, yesLabel;
+
+      if (currentLang === "fr"){
+        txt      = "Voulez-vous faire une pause momentanée sans sauvegarde, ou sauvegarder pour pouvoir reprendre dans les 5 heures en entrant le même code "+ userCode + " ?";;
+        noLabel  = "Pause seulement";
+        yesLabel = "Sauvegarder (5h)";
+        if (btn) btn.textContent = "Reprendre";
+      } else if (currentLang === "en"){
+        txt      = "Do you want only a temporary pause without saving, or save so you can resume within 5 hours by entering the same code"+ userCode + " ?";;
+        noLabel  = "Pause only";
+        yesLabel = "Save (5h)";
+        if (btn) btn.textContent = "Resume";
+      } else {
+        txt      = "Vill du bara ta en paus utan att spara, eller spara så att du kan återuppta inom 5 timmar genom att ange samma kod"+ userCode + " ?";;
+        noLabel  = "Endast paus";
+        yesLabel = "Spara (5h)";
+        if (btn) btn.textContent = "Återuppta";
+      }
+
+      if (msg)   msg.textContent   = txt;
+      if (noBtn) noBtn.textContent = noLabel;
+      if (svBtn) svBtn.textContent = yesLabel;
+
+      if (panel) panel.style.display = "block";
+// bloc qui gère PAUS
+    if (noBtn){
+  noBtn.onclick = ()=>{
+    // fermer panneau de pause
+    if (panel) panel.style.display = "none";
+
+    // remettre le bouton principal sur "Pause / Paus"
+    let label;
+    if (currentLang === "fr"){
+      label = "Pause";
+    } else if (currentLang === "en"){
+      label = "Pause";
+    } else {
+      label = "Paus";
+    }
+    if (btn) btn.textContent = label;
+
+    // >>> remettre le curseur dans la fenêtre actuelle (texte ou score)
+    setTimeout(()=>{
+      const sc = document.getElementById("scoreContainer");
+      const si = document.getElementById("scoreInput");
+      let target;
+
+      if (sc && sc.style.display !== "none" && si){
+        // une échelle était ouverte → focus score
+        target = si;
+      } else {
+        // sinon → focus texte
+        target = document.getElementById("answerInput");
+      }
+
+      if (target){
+        try{
+          target.focus();
+          if (target.select) target.select();
+        }catch(_){}
+      }
+    }, 50);
+  };
+}
+ 
+
+      if (svBtn){
+        svBtn.onclick = ()=>{
+          if (typeof saveState === "function"){ saveState(); }
+          if (panel) panel.style.display = "none";
+
+          // Message après sauvegarde 5h
+    // Message après sauvegarde 5h incluant le code
+let m2;
+if (currentLang === "fr"){
+  m2 = "La session a été sauvegardée pour 5 heures. Vous pouvez maintenant fermer cette page et reprendre plus tard en entrant le même code : " + userCode;
+} else if (currentLang === "en"){
+  m2 = "Session saved for 5 hours. You can now close this page and resume later by entering the same code: " + userCode;
+} else {
+  m2 = "Sessionen har sparats i 5 timmar. Du kan nu stänga sidan och återuppta senare genom att ange samma kod: " + userCode;
+}
+          alert(m2);
+          try{ window.close(); }catch(_){}
+        };
+      }
+      } else {
+        if (panel) panel.style.display = "none";
+
+        let label;
+        if (currentLang === "fr"){
+          label = "Pause";
+        } else if (currentLang === "en"){
+          label = "Pause";
+        } else {
+          label = "Paus";
+        }
+        if (btn) btn.textContent = label;
+
+        // >>> Quand on clique ÅTERUPPTA (ou Resume/Reprendre)
+        // on remet le curseur dans la dernière fenêtre utilisée
+        setTimeout(()=>{
+          const sc = document.getElementById("scoreContainer");
+          const si = document.getElementById("scoreInput");
+          let target;
+
+          if (sc && sc.style.display !== "none" && si){
+            // Si une échelle est ouverte → focus sur le score
+            target = si;
+          } else {
+            // Sinon → focus sur la grande fenêtre texte
+            target = document.getElementById("answerInput");
+          }
+
+          if (target){
+            try{
+              target.focus();
+              if (target.select) target.select();
+            }catch(_){}
+          }
+        }, 50);
+      }  
+
+  });
+
+   // ===== Helpers export TXT (comme test18_neuro) =====
+  function buildTxtExport(){
+    const lines = [];
+    lines.push("Formulär / Questionnaire: " + (FORM_ID || ""));
+    lines.push("Kod / Code: " + (userCode || ""));
+    lines.push("");
+
+    answers.forEach((a,i)=>{
+      const q = questions[i] || {};
+      const qLabel = "Q" + (i+1) + ". " + (q.text || "");
+      const text  = (a && a.text) ? a.text : "";
+      const score = (a && typeof a.score === "number") ? a.score : "";
+
+      lines.push(qLabel);
+      if (text){
+        lines.push("Svar / Answer: " + text);
+      }
+      if (score !== ""){
+        lines.push("Score: " + score);
+      }
+      lines.push("");
+    });
+
+    return lines.join("\n");
+  }
+
+// ===== Actions de synthèse (PDF / COPIER / SLUTFÖR) =====
+
+// PDF = afficher les réponses dans la page
+document.getElementById("pdfBtn").addEventListener("click", () => {
+  buildPrintView();
+
+  const labels = {
+    sv: ["Skriv ut / Spara som PDF", "Tillbaka till sammanfattningen"],
+    fr: ["Imprimer / Enregistrer en PDF", "Retour au résumé"],
+    en: ["Print / Save as PDF", "Back to summary"]
+  };
+  const text = labels[currentLang] || labels.sv;
+
+  document.getElementById("printPreviewBtn").textContent = text[0];
+  document.getElementById("backToSummaryBtn").textContent = text[1];
+
+  document.getElementById("summary").style.display = "none";
+  document.getElementById("printView").style.display = "block";
+  window.scrollTo(0, 0);
+});
+
+document.getElementById("backToSummaryBtn").addEventListener("click", () => {
+  document.getElementById("printView").style.display = "none";
+  document.getElementById("summary").style.display = "block";
+  window.scrollTo(0, 0);
+});
+
+// KOPIERA / COPIER = export TXT (brouillé ou clair selon CONFIG_SECURE_EXPORT)
+document.getElementById("copyBtn").addEventListener("click", ()=>{
+  const lang = (currentLang === "fr") ? "fr" : (currentLang === "en") ? "en" : "sv";
+
+  let header;
+  if (lang === "fr"){
+    header = "Code : " + (userCode || "") + "\n\n";
+  } else if (lang === "en"){
+    header = "Code: " + (userCode || "") + "\n\n";
+  } else {
+    header = "Kod: " + (userCode || "") + "\n\n";
+  }
+
+  let answerLabel =
+    (lang === "fr") ? "Réponse" :
+    (lang === "en") ? "Answer"  :
+                      "Svar";
+
+  // 1) TEXTE PROPRE, NON BROUILLÉ
+  let plain = header;
+  (questions || []).forEach((q, i)=>{
+    const a  = answers[i] || {};
+    const t  = a.text || "";
+    const sc = (typeof a.score === "number") ? (" | Score: " + a.score) : "";
+
+    const rawQ = (q && q.text ? q.text : "");
+    const rawA = t;
+
+    plain += (i+1) + ". " + rawQ + "\n" +
+             answerLabel + ": " + rawA + sc + "\n\n";
+  });
+
+  // 2) Selon CONFIG_SECURE_EXPORT : brouillé ou non
+  const finalText = CONFIG_SECURE_EXPORT ? scrambleText(plain) : plain;
+
+  // 3) Sauvegarde du texte
+  const blob = new Blob([finalText], {type:"text/plain"});
+  const url  = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+
+  // Nom du fichier selon la langue + mode
+  let filename;
+  if (lang === "fr"){
+    filename = (CONFIG_SECURE_EXPORT
+      ? "Réponses_Questionnaire_brouillees_"
+      : "Réponses_Questionnaire_")
+      + (userCode || "") + ".txt";
+  } else if (lang === "en"){
+    filename = (CONFIG_SECURE_EXPORT
+      ? "Questionnaire_Answers_scrambled_"
+      : "Questionnaire_Answers_")
+      + (userCode || "") + ".txt";
+  } else {
+    filename = (CONFIG_SECURE_EXPORT
+      ? "Formulär_Svar_blandade_"
+      : "Formulär_Svar_")
+      + (userCode || "") + ".txt";
+  }
+
+  link.download = filename;
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+
+  // Message d’info
+  if (lang === "fr"){
+    alert(
+      (CONFIG_SECURE_EXPORT
+        ? `Fichier brouillé enregistré : ${filename}\nDans votre dossier "Téléchargements".`
+        : `Fichier enregistré : ${filename}\nDans votre dossier "Téléchargements".`)
+    );
+  } else if (lang === "en"){
+    alert(
+      (CONFIG_SECURE_EXPORT
+        ? `Scrambled file saved: ${filename}\nIn your "Downloads" folder.`
+        : `File saved: ${filename}\nIn your "Downloads" folder.`)
+    );
+  } else {
+    alert(
+      (CONFIG_SECURE_EXPORT
+        ? `Blandad fil sparad: ${filename}\nI din mapp "Hämtade filer".`
+        : `Fil sparad: ${filename}\nI din mapp "Hämtade filer".`)
+    );
+  }
+});
+
+
+// SLUTFÖR / TERMINER = choix du nom de fichier + plein écran final + ENTER pour fermer
+document.getElementById("closeBtn").addEventListener("click", ()=>{
+  const lang = (currentLang === "fr") ? "fr" : (currentLang === "en") ? "en" : "sv";
+
+  // --- 1) Demander le nom de fichier
+  let promptText, defaultName, codeLabel, answerLabel;
+  if (lang === "fr"){
+    promptText  = "Nom du fichier de réponses (.txt) :";
+    defaultName = "Réponses_Questionnaire_" + (userCode || "") + ".txt";
+    codeLabel   = "Code : ";
+    answerLabel = "Réponse";
+  } else if (lang === "en"){
+    promptText  = "Answer file name (.txt):";
+    defaultName = "Questionnaire_Answers_" + (userCode || "") + ".txt";
+    codeLabel   = "Code: ";
+    answerLabel = "Answer";
+  } else {
+    promptText  = "Filnamn för svar (.txt):";
+    defaultName = "Formulär_Svar_" + (userCode || "") + ".txt";
+    codeLabel   = "Kod: ";
+    answerLabel = "Svar";
+  }
+
+  const filename = prompt(promptText, defaultName);
+  if (!filename) return;
+
+  // --- 2) Construire le contenu texte (propre)
+  let plain = codeLabel + (userCode || "") + "\n\n";
+  (questions || []).forEach((q, i)=>{
+    const a  = answers[i] || {};
+    const t  = a.text || "";
+    const sc = (typeof a.score === "number") ? (" | Score: " + a.score) : "";
+
+    const rawQ = (q && q.text ? q.text : "");
+    const rawA = t;
+
+    plain += (i+1) + ". " + rawQ + "\n" +
+             answerLabel + ": " + rawA + sc + "\n\n";
+  });
+
+  // --- 3) Selon CONFIG_SECURE_EXPORT : brouillé ou texte en clair
+  const txt = CONFIG_SECURE_EXPORT ? scrambleText(plain) : plain;
+
+  // --- 4) Télécharger le .txt
+  const blob = new Blob([txt], { type:"text/plain" });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  // --- 5) Nettoyer le localStorage (pause/reprise)
+  try{
+    if (userCode){
+      const key = FORM_ID + "_" + userCode;
+      localStorage.removeItem(key);
+    }
+  }catch(e){
+    console.warn("Erreur lors de l’effacement de l’état sauvegardé", e);
+  }
+
+  // --- 6) Écran final plein écran + ENTER pour fermer (SV / FR / EN)
+  const folder = (lang === "fr")
+    ? "Téléchargements"
+    : (lang === "en" ? "Downloads" : "Hämtade filer");
+
+  const finalTexts = {
+    sv: {
+      title: "Tack!",
+      main:  `Dina svar har sparats i mappen "${folder}". Du kan nu stänga fönstret.`,
+      hint:  "Tryck RETUR för att stänga fliken.",
+      block: "Automatisk stängning blockerad. Tryck Ctrl+W (Cmd+W på Mac) eller Alt+F4."
+    },
+    fr: {
+      title: "Merci !",
+      main:  `Vos réponses ont été enregistrées dans le dossier "${folder}". Vous pouvez maintenant fermer la fenêtre.`,
+      hint:  "Appuyez sur ENTRÉE pour fermer l’onglet.",
+      block: "Fermeture automatique bloquée. Appuyez sur Ctrl+W (Cmd+W sur Mac) ou Alt+F4."
+    },
+    en: {
+      title: "Thank you!",
+      main:  `Your answers have been saved in the "${folder}" folder. You can now close this window.`,
+      hint:  "Press ENTER to close the tab.",
+      block: "Auto-close blocked. Press Ctrl+W (Cmd+W on Mac) or Alt+F4."
+    }
+  }[lang];
+
+  // Remplacement du body par l’écran final
+  document.body.innerHTML = `
+    <div id="finalScreen" style="
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#0b57d0;
+      color:#fff;
+      font-family:Arial,sans-serif;
+      text-align:center;
+      padding:2rem;
+    ">
+      <div>
+        <h1 style="font-size:1.8rem;margin-bottom:1rem;">${finalTexts.title}</h1>
+        <p style="margin-bottom:0.5rem;">${finalTexts.main}</p>
+        <p id="closeHint" style="margin-top:1.5rem;font-size:0.9rem;opacity:0.9;">
+          ${finalTexts.hint}
+        </p>
+      </div>
+    </div>
+  `;
+
+  // --- 7) Gestion du clavier : ENTER essaie de fermer l’onglet
+  function attemptCloseOnce(){
+    try{
+      // Si ouverte par un autre script ou marquée "spawned"
+      if ((window.opener && !window.opener.closed) || window.spawned){
+        window.close();
+        return true;
+      }
+      // Navigation interne possible
+      if (history.length > 1){
+        history.back();
+        return true;
+      }
+
+      // Dernier essai (souvent bloqué)
+      window.open("", "_self");
+      window.close();
+    }catch(_){}
+    return false;
+  }
+
+  function onCloseKey(e){
+    const k = e.key;
+    if (k !== "Enter" && k !== "NumpadEnter") return;
+    e.preventDefault();
+    const ok = attemptCloseOnce();
+    if (!ok){
+      const hint = document.getElementById("closeHint");
+      if (hint){
+        hint.textContent = finalTexts.block;
+      }
+    }
+  }
+
+  window.addEventListener("keydown", onCloseKey);
+});
+
+
+  // Export JSON Codicent (inchangé)
+  document.getElementById("sendToCodicentBtn").addEventListener("click", ()=>{
+    const payload = {
+      program: CONFIG_ACTIVE_FORM,
+      version: "Version Q70 74p",
+      code:    userCode,
+      answers
+    };
+
+    const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download="answers.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  document.getElementById("sendToCodicentBtn").addEventListener("click", ()=>{
+   const payload = {  program: CONFIG_ACTIVE_FORM,  version: "Version Q70 74p",
+  code: userCode,
+  answers
+};
+
+    const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
+    const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="answers.json"; a.click(); URL.revokeObjectURL(a.href);
+  });
+
+  // ENTER key behavior
+document.addEventListener("keydown", (ev)=>{
+  if (ev.key !== "Enter") return;
+
+  const ms   = document.getElementById("menuScreen");
+  const inS  = document.getElementById("introScreen");
+  const main = document.getElementById("main");
+
+  // ENTER sur menu langue
+  if (ms && ms.style.display !== "none"){
+    ev.preventDefault();
+    const btn = document.getElementById("nextLangBtn");
+    if (btn) btn.click();
+    return;
+  }
+
+  // ENTER sur intro
+  if (inS && inS.style.display !== "none"){
+    ev.preventDefault();
+    const btn = document.getElementById("startBtn");
+    if (btn) btn.click();
+    return;
+  }
+
+  // ENTER pendant le questionnaire
+  if (main && main.style.display !== "none"){
+    const sc = document.getElementById("scoreContainer");
+
+    // Si une échelle est ouverte → ENTER valide l’échelle
+    if (sc && sc.style.display !== "none"){
+      ev.preventDefault();
+      onValidateScore();
+    } else {
+      // sinon → ENTER valide le texte
+      ev.preventDefault();
+      onValidateText();
+    }
+  }
+});
+
+  // show menu
+  show("menuScreen");
+});
+</script>
+</head>
+<body>
+
+<header>
+  <h1 id="titleBar">
+    <span id="mainTitle">Frågeformulär SÖMN</span> — 
+    <span id="versionNum">Version Q70 74p</span>
+  </h1>
+  <div class="subhead">
+    <div id="homeTitle">Välj formulär och språk för att börja.</div>
+    <div id="homeSub1">Dina svar är konfidentiella. Ta den tid du behöver.</div>
+  </div>
+  <div id="validityLines" class="validity"></div>
+
+  <!-- Bouton d'aide multilingue -->
+  <button id="helpBtn" type="button" class="help-btn" onclick="toggleHelp()">Hjälp</button>
+</header>
+
+<!-- Panneau d'aide, affiché/masqué par le bouton -->
+<section id="helpPanel" class="intro-card" style="display:none;">
+  <h2 id="helpTitle"></h2>
+  <div id="helpContent"></div>
+</section>
+
+
+
+  <!-- MENU (Accueil) -->
+  <section id="menuScreen">
+    <h2 id="selectTitle">Välj frågeformulär och språk</h2>
+    <label for="questionnaireSelect">Frågeformulär:</label>
+    <select id="questionnaireSelect"></select>
+    <br><br>
+    <label id="voiceLabel" for="voiceStatus">Röst (enligt enheten):</label>
+    <input id="voiceStatus" class="inline" type="text" style="width:50%;max-width:360px" readonly value=""/>
+    <button id="voiceTestBtn" class="inline" type="button">Rösttest</button><span id="voiceOk" class=""></span>
+    <br><br>
+    <label for="langSelect">Språk :</label>
+    <select id="langSelect"></select>
+    <br><br>
+    <div id="menuError" class="error"></div>
+    <button id="nextLangBtn">Fortsätt</button>
+  </section>
+
+  <!-- INTRO -->
+  <section id="introScreen" class="intro-card" style="display:none;">
+    <h2 id="introTitle">Introduktion</h2>
+    <p id="introText" style="white-space:pre-line;"></p>
+    <label id="labelCode">Ange din fyrsiffriga kod:</label><br>
+    <input type="text" id="codeInput" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" />
+    <div id="introErrorMsg" class="error"></div>
+    <br>
+    <button id="startBtn">Starta</button>
+  </section>
+
+  <!-- MAIN -->
+  <section id="main" style="display:none;">
+    <div id="instructionBox" class="instructions">
+      <span id="instructionText">På tangentbordet tryck <span>RETUR</span></span>
+      <span id="microStatus">🎤 Mikrofon av</span>
+    </div>
+
+    <div id="sectionNum" class="section-number"></div>
+    <div id="questionNum" class="question-number"></div>
+    <div id="questionText"></div>
+    <textarea id="answerInput" placeholder="Skriv ditt svar här…"></textarea>
+    <div id="mainErrorMsg" class="error"></div>
+
+    <div id="pausePanel" style="
+      display:none;
+      padding:1em;
+      background:#eef3ff;
+      border:1px solid #99b;
+      border-radius:8px;
+      margin:1em 0;
+    ">
+      <p id="pausePanelMsg" style="margin-bottom:1em; font-size:1em;"></p>
+      <button id="pauseNoSaveBtn"  type="button" style="margin-right:1em;"></button>
+      <button id="pauseSaveBtn"    type="button"></button>
+    </div>
+
+    <div id="scoreContainer">
+      <label id="scoreLabel"></label><br>
+      <input type="number" id="scoreInput" min="1" max="5">
+      <button id="validateScoreBtn">OK</button>
+    </div>
+
+    <div id="progressContainer"><div id="progressBar"></div></div>
+
+    <button id="validerBtn">Validera</button>
+    <button id="corrigerBtn">Korrigera</button>
+    <button id="pauseBtn">Paus</button>
+  
+<button id="voiceBtn" type="button"
+onclick="(function(){
+  var SR  = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var btn = document.getElementById('voiceBtn');
+  var ms  = document.getElementById('microStatus');
+
+  if (!SR){
+    alert('Taligenkänning stöds inte i denna webbläsare.');
+    if (ms){ ms.textContent = '🎤 Inte tillgängligt'; ms.style.color = 'red'; }
+    return;
+  }
+
+  // ► Resynchronise la langue avec le menu
+  var langSel = document.getElementById('langSelect');
+  if (langSel){
+    var v = langSel.value;
+    if (v === 'Français'){ window.currentLang = 'fr'; }
+    else if (v === 'English'){ window.currentLang = 'en'; }
+    else { window.currentLang = 'sv'; }
+  }
+// ► Texte du micro multi-langue (utilise microStatusText si dispo)
+// ► Texte du micro multi-langue (utilise microStatusText si dispo)
+function label(on){
+  if (typeof window.microStatusText === 'function'){
+    return window.microStatusText(on);
+  }
+  var lang = window.currentLang || 'sv';
+  if (lang === 'fr') return on ? '🎤 Micro actif' : '🎤 Micro inactif';
+  if (lang === 'en') return on ? '🎤 Micro on'    : '🎤 Micro off';
+  return on ? '🎤 Mikrofon på' : '🎤 Mikrofon av';
+}
+
+  // ► Initialisation de la reco si besoin
+  if (!window.__rec){
+    var rec = new SR();
+    window.__rec = rec;
+
+    var cLang = window.currentLang || 'sv';
+    var langCode = (cLang === 'fr') ? 'fr-FR'
+                 : (cLang === 'en') ? 'en-US'
+                 : 'sv-SE';
+
+    rec.lang            = langCode;
+    rec.interimResults  = true;
+    rec.continuous      = false;
+    rec.maxAlternatives = 1;
+
+    rec.onstart = function(){
+      if (btn){ btn.classList.add('active'); }
+      if (ms){ ms.textContent = label(true); ms.style.color = 'green'; }
+    };
+
+    rec.onend = function(){
+      if (btn){ btn.classList.remove('active'); }
+      if (ms){ ms.textContent = label(false); ms.style.color = 'red'; }
+      rec._active = false;
+    };
+
+    rec.onerror = function(e){
+      console.warn('Reco error', e);
+      if (btn){ btn.classList.remove('active'); }
+      if (ms){
+        ms.textContent = '🎤 Fel vid inspelning';
+        ms.style.color = 'orange';
+      }
+      rec._active = false;
+    };
+
+    rec.onresult = function(ev){
+      try{
+        var base = ev.results[ev.results.length - 1];
+        if (!base || !base[0] || !base[0].transcript) return;
+
+        var raw = String(base[0].transcript).trim();
+        var a = document.getElementById('answerInput');
+        if (a){
+          a.value = raw;
+        }
+      }catch(_){}
+    };
+  }
+
+  var rec = window.__rec;
+
+  // ► Start / Stop
+  try{
+    if (rec._active){
+      rec.stop();
+      rec._active = false;
+    } else {
+      // met à jour la langue à chaque démarrage
+      var cLang2 = window.currentLang || 'sv';
+      var langCode2 = (cLang2 === 'fr') ? 'fr-FR'
+                       : (cLang2 === 'en') ? 'en-US'
+                       : 'sv-SE';
+      rec.lang = langCode2;
+      rec.start();
+      rec._active = true;
+    }
+  }catch(e){
+    console.warn('Reco start/stop error', e);
+  }
+
+})()">
+  🎙️ Mikrofon
+</button>
+
+
+    <button id="ttsToggleBtn" type="button">Röst</button>
+  </section>
+
+  <!-- SUMMARY -->
+  <section id="summary" style="display:none;">
+    <h2 id="summaryTitle">SAMMANFATTNING  KORRIGERING</h2>
+    <p><strong id="summaryCodeLabel">Formulärkod :</strong> <span id="resumeCode"></span></p>
+    <ul id="answersList"></ul>
+    <label id="globalCommentLabel" for="globalComment">Kommentarer</label>
+    <textarea id="globalComment"></textarea>
+    <br>
+    <button id="pdfBtn">Exportera PDF</button>
+    <button id="copyBtn">Kopiera</button>
+    <button id="closeBtn">Slutför</button>
+  <button id="sendToCodicentBtn" type="button" disabled
+  style="background:#e0e0e0;color:#888;cursor:not-allowed;">
+  Skicka för analys
+</button>
+
+  </section>
+
+  <!-- PRINT VIEW (hidden on screen, shown in PDF/print) -->
+  <section id="printView" style="display:none;">
+<div id="previewActions">
+  <button id="printPreviewBtn" type="button">
+    Skriv ut / Spara som PDF
+  </button>
+  <button id="backToSummaryBtn" type="button">
+    Tillbaka till sammanfattningen
+  </button>
+</div>
+    <h2 id="printTitle">SAMMANFATTNING  KORRIGERING</h2>
+    <p id="printCode"></p>
+    <div id="printList"></div>
+  </section>
+<footer>
+  <small id="footerProgram"></small>
+</footer>
+
+<script>
+
+/* === TTS multilingue pour le bouton RÖST/VOICE/VOIX – TYST/SILENCE === */
+(function(){
+  if (!("speechSynthesis" in window)) return;
+
+  // 1) Lire l'état mémorisé (ON/OFF)
+  try {
+    const st = localStorage.getItem("tts_on");
+    if (st === "1")      { window.ttsEnabled = true;  }
+    else if (st === "0") { window.ttsEnabled = false; }
+    else if (typeof window.ttsEnabled !== "boolean") {
+      window.ttsEnabled = false;
+    }
+  } catch(_) {
+    if (typeof window.ttsEnabled !== "boolean") window.ttsEnabled = false;
+  }
+
+  // 2) Libellés du bouton selon la langue
+  
+    // currentLang est déjà gérée dans ton code principal: "sv", "en", "fr"
+  function ttsLabels(){
+    const lang = (typeof currentLang !== "undefined" && currentLang)
+      ? currentLang
+      : (typeof window !== "undefined" && window.currentLang ? window.currentLang : "sv");
+
+    if (lang === "en"){
+      return { on: "🔇 SILENCE", off: "🔊 VOICE" };
+    }
+    if (lang === "fr"){
+      return { on: "🔇 SILENCE", off: "🔊 VOIX" };
+    }
+    // défaut = suédois
+    return { on: "🔇 TYST",    off: "🔊 RÖST" };
+  }
+
+  // 3) Lecture de la question courante
+  function speakCurrent(){
+    try{
+      if (!window.ttsEnabled) return;
+      const idx = window.currentQuestion;
+      if (!Number.isFinite(idx)) return;
+      const qs = window.questions || [];
+      const q  = qs[idx] || {};
+      let text = q.text || "";
+      if (!text) return;
+
+      text = String(text).replace(/<[^>]+>/g, "");
+
+      const synth = window.speechSynthesis;
+      if (!synth) return;
+
+      synth.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+
+      const voices = synth.getVoices() || [];
+      // on essaie de choisir une voix cohérente avec currentLang
+      let wantedLang = "sv-SE";
+      if (currentLang === "en") wantedLang = "en-US";
+      if (currentLang === "fr") wantedLang = "fr-FR";
+
+      let vmatch = voices.find(v => v.lang && v.lang.toLowerCase() === wantedLang.toLowerCase());
+      if (!vmatch) {
+        vmatch = voices.find(v => v.lang && v.lang.toLowerCase().startsWith(wantedLang.slice(0,2).toLowerCase()));
+      }
+      if (!vmatch) vmatch = voices[0];
+
+      if (vmatch) {
+        u.voice = vmatch;
+        u.lang  = vmatch.lang || wantedLang;
+      } else {
+        u.lang = wantedLang;
+      }
+
+      u.rate  = 1.0;
+      u.pitch = 1.0;
+      synth.speak(u);
+    } catch(_){}
+  }
+
+  // 4) Mise à jour du texte du bouton
+  function updateBtn(){
+  const b = document.getElementById("ttsToggleBtn");
+  if (!b) return;
+
+  const L = ttsLabels();
+  const on = !!window.ttsEnabled;
+
+  b.textContent = on ? L.on : L.off;
+  b.setAttribute("aria-pressed", on ? "true" : "false");
+}
+  
+// 5) Attacher le toggle
+function attach(){
+  const b = document.getElementById("ttsToggleBtn");
+  if (!b) return;
+  try {
+    b.onclick = null;
+    b.removeAttribute("onclick");
+  } catch(_) {}
+
+  b.addEventListener("click", function(ev){
+    ev.preventDefault();
+    ev.stopPropagation();
+
+    window.ttsEnabled = !window.ttsEnabled;
+    try {
+      localStorage.setItem("tts_on", window.ttsEnabled ? "1" : "0");
+    } catch(_) {}
+
+    if (!window.ttsEnabled) {
+      try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch(_){}
+    } else {
+      speakCurrent();
+    }
+    updateBtn();
+
+    // >>> Comme pour PAUS : remettre le curseur dans la bonne fenêtre
+    setTimeout(()=>{
+      const sc = document.getElementById("scoreContainer");
+      const si = document.getElementById("scoreInput");
+      let target;
+
+      if (sc && sc.style.display !== "none" && si){
+        target = si;
+      } else {
+        target = document.getElementById("answerInput");
+      }
+
+      if (target){
+        try{
+          target.focus();
+        if (target.setSelectionRange) {
+    const end = target.value.length;
+    target.setSelectionRange(end, end);   // curseur à la fin, PAS de sélection
+}
+        }catch(_){}
+      }
+    }, 50);
+
+  }, { passive:false });
+}
+
+
+  // 6) Relire la question quand on change de question (si TTS activé)
+  let lastIdx = -1;
+  function poll(){
+    try{
+      const main = document.getElementById("main");
+      if (main && main.style.display !== "none") {
+        const idx = window.currentQuestion;
+        if (idx !== lastIdx) {
+          lastIdx = idx;
+          setTimeout(speakCurrent, 80);
+        }
+      }
+    } catch(_){}
+  }
+
+  document.addEventListener("DOMContentLoaded", function(){
+    attach();
+    updateBtn();
+
+    // Si on change la langue → adapter le texte du bouton
+    const langSel = document.getElementById("langSelect");
+    if (langSel){
+      langSel.addEventListener("change", function(){
+        // currentLang est mis à jour par ton code principal
+        setTimeout(updateBtn, 50);
+      });
+    }
+
+    setInterval(poll, 250);
+  });
+})();
+</script>
+
+
+</body>
+</html>
